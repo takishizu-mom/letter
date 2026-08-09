@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>レター ── 触れるモック</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="レター">
+<meta property="og:title" content="レター｜触って試す">
+<meta property="og:description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<meta property="og:image" content="https://takishizu-mom.github.io/letter/ogp.png">
+<meta property="og:url" content="https://takishizu-mom.github.io/letter/mock.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="index.html">レター</a>
+  <a class="back-link" href="index.html">← トップへ戻る</a>
+</header>
+
+<div class="container">
+
+  <h1 style="margin-bottom:4px;">触れるモック</h1>
+  <p style="color:var(--gray); margin-top:0;">実際に触って確かめてください。送信しても、どこにも届きません。</p>
+
+  <div class="tabs">
+    <button type="button" class="tab-btn active" data-tab-target="tab-staff">社員の画面</button>
+    <button type="button" class="tab-btn" data-tab-target="tab-boss">社長の画面</button>
+    <button type="button" class="tab-btn" data-tab-target="tab-summary">週次サマリー</button>
+  </div>
+
+  <!-- タブ①：社員の画面 -->
+  <div class="tab-panel active" id="tab-staff">
+    <div data-slack-mock></div>
+  </div>
+
+  <!-- タブ②：社長の画面 -->
+  <div class="tab-panel" id="tab-boss">
+
+    <div class="table-heading">
+      <h3>週次レポートDB</h3>
+      <span class="badge-view open">👥 社長＋部門リーダーが閲覧</span>
+    </div>
+
+    <div class="table-block">
+      <div class="filter-row">
+        <button type="button" class="filter-btn active" data-filter="all">すべて</button>
+        <button type="button" class="filter-btn" data-filter="happy">😊 順調</button>
+        <button type="button" class="filter-btn" data-filter="meh">😐 遅れ気味</button>
+        <button type="button" class="filter-btn" data-filter="sos">🆘 要フォロー</button>
+        <button type="button" class="filter-btn" data-filter="nofile">📎 成果物なし</button>
+      </div>
+
+      <div class="table-scroll">
+        <table class="notion-table">
+          <thead>
+            <tr>
+              <th>名前</th><th>部門</th><th>週</th><th>調子</th><th>成果物</th><th>ひとこと</th><th>要フォロー</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr data-status="happy" data-nofile="false">
+              <td>山田 太郎</td><td>IT広告</td><td>8/14週</td>
+              <td><span class="chip-status chip-happy">😊 順調</span></td>
+              <td>📎2件</td><td>来週の入稿分も準備できました</td><td></td>
+            </tr>
+            <tr data-status="happy" data-nofile="false">
+              <td>佐藤 花子</td><td>飲食</td><td>8/14週</td>
+              <td><span class="chip-status chip-happy">😊 順調</span></td>
+              <td>📎1件</td><td>新メニューの写真撮影が完了しました</td><td></td>
+            </tr>
+            <tr data-status="meh" data-nofile="false">
+              <td>高橋 健</td><td>IT広告</td><td>8/14週</td>
+              <td><span class="chip-status chip-meh">😐 遅れ気味</span></td>
+              <td>📎1件</td><td>予定より少し遅れています</td><td></td>
+            </tr>
+            <tr data-status="happy" data-nofile="true">
+              <td>田中 美咲</td><td>飲食</td><td>8/14週</td>
+              <td><span class="chip-status chip-happy">😊 順調</span></td>
+              <td>なし</td><td>特にありません</td><td></td>
+            </tr>
+            <tr data-status="sos" data-nofile="true">
+              <td>伊藤 修</td><td>IT広告</td><td>8/14週</td>
+              <td><span class="chip-status chip-sos">🆘 要フォロー</span></td>
+              <td>なし</td><td>───</td><td>✅</td>
+            </tr>
+            <tr data-status="meh" data-nofile="true">
+              <td>渡辺 直樹</td><td>飲食</td><td>8/14週</td>
+              <td><span class="chip-status chip-meh">😐 遅れ気味</span></td>
+              <td>なし</td><td>シフト調整に追われました</td><td></td>
+            </tr>
+            <tr data-status="happy" data-nofile="false">
+              <td>小林 彩</td><td>IT広告</td><td>8/14週</td>
+              <td><span class="chip-status chip-happy">😊 順調</span></td>
+              <td>📎3件</td><td>クリエイティブ差し替え完了</td><td></td>
+            </tr>
+            <tr data-status="sos" data-nofile="true">
+              <td>中村 悠</td><td>飲食</td><td>8/14週</td>
+              <td><span class="chip-status chip-sos">🆘 要フォロー</span></td>
+              <td>なし</td><td>───</td><td>✅</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <p class="between-note">🆘 を選んだ人の詳細は、上の表には出ずにこちらへ振り分けられます ↓</p>
+
+    <div class="table-heading">
+      <h3>SOS相談DB</h3>
+      <span class="badge-view locked">🔒 社長のみ</span>
+    </div>
+
+    <div class="table-scroll">
+      <table class="notion-table">
+        <thead>
+          <tr><th>名前</th><th>週</th><th>困りごと</th><th>求めるもの</th><th>対応状況</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>伊藤 修</td><td>8/14週</td>
+            <td>案件の量が明らかに多くて、他のメンバーにも影響が出ています。誰かに手伝ってもらいたいです。</td>
+            <td>人・お金・時間がほしい</td>
+            <td><span class="chip-status-plain">未対応</span></td>
+          </tr>
+          <tr>
+            <td>中村 悠</td><td>8/14週</td>
+            <td>シフトの穴埋めが続いていて、正直しんどいです。どうしたらいいか判断してほしいです。</td>
+            <td>判断・指示がほしい</td>
+            <td><span class="chip-status-plain">対応中</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- タブ③：週次サマリー -->
+  <div class="tab-panel" id="tab-summary">
+    <div class="summary-card">📊 今週の全社サマリー（8/14週）
+
+提出 <span class="num-lg">17/19</span>名（未提出：2名）
+
+😊 順調 12名 ／ 😐 遅れ気味 3名 ／ 🆘 要フォロー 2名
+
+━━━ 今週すぐ動いたほうがいいこと ━━━
+・（IT広告）新規案件の入稿が2週連続で遅延。人手が足りていない可能性
+・（飲食・A店）シフトの穴埋めで店長の負荷が偏っている
+
+━━━ 良かったこと ━━━
+・（IT広告）B社のクリエイティブ差し替えで CTR 改善の報告あり
+
+━━━ 気になる兆候 ━━━
+・3週連続で成果物の添付がない人が1名（体調・業務量の確認を推奨）</div>
+    <p class="footnote">このまとめは Claude Code が Slack の回答を読んで自動生成します</p>
+  </div>
+
+</div>
+
+</body>
+</html>

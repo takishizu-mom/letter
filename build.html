@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>レター ── 実装フロー</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="レター">
+<meta property="og:title" content="レター｜実装フロー">
+<meta property="og:description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<meta property="og:image" content="https://takishizu-mom.github.io/letter/ogp.png">
+<meta property="og:url" content="https://takishizu-mom.github.io/letter/build.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="index.html">レター</a>
+  <a class="back-link" href="index.html">← トップへ戻る</a>
+</header>
+
+<div class="container">
+
+  <h1 style="margin-bottom:4px;">実装フロー</h1>
+  <p style="color:var(--gray); margin-top:0;">下のプロンプトをそのままコピーして、ご自身の Claude Code に貼り付けてください。</p>
+
+  <!-- 5-1. フローチャート -->
+  <div class="flow-chart">
+    <div class="flow-box">金曜 17:00</div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-box">Slack が全社員に自動送信</div>
+    <div class="flow-note">← ワークフロービルダーのスケジュール起動</div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-box">社員がフォームに回答（30秒）</div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-box plain">┌── Q1 の答えで分岐 ──┐</div>
+
+    <div class="flow-branch">
+      <div class="flow-col">
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box branch-calm">😊😐 そのまま送信</div>
+      </div>
+      <div class="flow-col">
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box branch-sos">🆘 詳細欄が追加で出る</div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box">非公開チャンネルに回答が溜まる</div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-box">月曜朝：社長が Claude Code に合言葉を打つ</div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-box">Claude Code が Slack を読む</div>
+    <div class="flow-note">← Slack 公式 MCP（無料・要管理者承認）</div>
+    <div class="flow-arrow">↓</div>
+
+    <div class="flow-box plain">┌── 振り分け ──┐</div>
+
+    <div class="flow-branch">
+      <div class="flow-col">
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">週次レポートDB<br>社長＋リーダー</div>
+      </div>
+      <div class="flow-col">
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">SOS相談DB<br>社長のみ</div>
+      </div>
+    </div>
+
+    <div class="flow-arrow">↓</div>
+    <div class="flow-box">週次サマリー1枚が出力される</div>
+  </div>
+
+  <!-- 5-2. コピペ用プロンプト -->
+  <h2>コピペ用プロンプト</h2>
+
+  <p class="copy-block-desc">① まずはじめに、Slack と Notion を Claude Code につなぐための手順を聞くプロンプトです。ボタンを押してコピーし、ご自身の Claude Code に貼ってください。</p>
+  <div class="copy-block">
+    <div class="copy-block-header">
+      <span>ブロック1：準備（Slack と Notion をつなぐ）</span>
+      <button type="button" class="copy-btn" data-target="block1">📋 コピー</button>
+    </div>
+    <pre class="copy-text" id="block1">私の会社に「レター」という週次報告の仕組みを作りたい。まず準備を手伝ってほしい。
+
+【やりたいこと】
+毎週金曜17時に Slack から全社員へ自動でフォームを送り、回答を Notion に自動で溜める。
+社員は Slack しか触らない。Notion を見るのは社長と部門リーダーだけ。
+
+【お願い】
+1. Slack の公式 MCP（slackapi/slack-skills-plugin）をこの Claude Code に接続する手順を、
+   番号付きで具体的に教えてください。私は非エンジニアなので、
+   「どの画面のどこにある何というボタンを押すか」まで書いてください。
+   ※ワークスペース管理者の承認が必要なはずなので、その手順も含めてください。
+2. Notion の MCP 接続手順も同様にお願いします。
+3. 接続できたか確認する方法も教えてください。</pre>
+  </div>
+
+  <p class="copy-block-desc">② Notion 側に、回答を溜めるための表（データベース）を2つ作ってもらうプロンプトです。</p>
+  <div class="copy-block">
+    <div class="copy-block-header">
+      <span>ブロック2：Notion 側を作る</span>
+      <button type="button" class="copy-btn" data-target="block2">📋 コピー</button>
+    </div>
+    <pre class="copy-text" id="block2">Notion に、レター用のデータベースを2つ作ってください。
+
+【DB1：週次レポート】閲覧＝社長＋部門リーダー（ゲスト招待）
+- 名前（タイトル）
+- 部門（セレクト：IT広告 / 飲食）
+- 週（日付）
+- 調子（セレクト：😊順調 / 😐遅れ気味 / 🆘要フォロー）
+- 成果物（ファイル&メディア）
+- 成果物リンク（URL）
+- ひとこと（テキスト）
+- 要フォロー（チェックボックス）
+
+【DB2：SOS相談】閲覧＝社長のみ
+- 名前（タイトル）
+- 週（日付）
+- 困りごと（テキスト）
+- 求めるもの（セレクト：話を聞いてほしい / 判断・指示がほしい /
+  人・お金・時間がほしい / 引き取ってほしい）
+- 対応状況（セレクト：未対応 / 対応中 / 完了）
+- 社長メモ（テキスト）
+
+【重要】
+DB2 は絶対にリーダーへ共有しないでください。
+DB1 には🆘の詳細を一切書かず、「要フォロー」にチェックを入れるだけにしてください。
+本音を集めるための設計なので、ここが崩れると仕組み全体が意味を失います。
+
+作り終わったら、2つの DB の URL を教えてください。</pre>
+  </div>
+
+  <p class="copy-block-desc">③ 毎週月曜の朝に、社長がそのまま打ち込むだけの合言葉です。Slack の回答を集計して、Notion に振り分けてくれます。</p>
+  <div class="copy-block">
+    <div class="copy-block-header">
+      <span>ブロック3：毎週の集計（月曜の朝に打つ合言葉）</span>
+      <button type="button" class="copy-btn" data-target="block3">📋 コピー</button>
+    </div>
+    <pre class="copy-text" id="block3">レターの集計をお願いします。
+
+1. Slack の #レター チャンネルから、先週金曜〜今日までの回答をすべて読む
+2. 各回答を Notion の「週次レポート」DB に1行ずつ追加する
+   - 添付ファイルがあれば、ファイル本体を Notion にアップロードして紐づける
+     （Notion の File Upload API を使う。20MBまでは1回で送れる）
+   - 調子が 🆘 の人は、詳細を「週次レポート」には書かず
+     「SOS相談」DB へ別途登録し、週次レポート側は「要フォロー」にチェックだけ入れる
+3. 未提出者を洗い出す
+4. 最後に、社長向けの週次サマリーを1枚にまとめて表示する
+   - 提出人数 / 調子の内訳
+   - 今週すぐ動いたほうがいいこと
+   - 良かったこと
+   - 気になる兆候（例：3週連続で成果物の添付がない人）
+5. 最後に、回答してくれた人ひとりずつへのお礼DMの文案を作ってください。
+   - その人の回答内容を踏まえた、短い労いの言葉にする
+   - 評価・採点をしない。ほめ言葉の押し売りもしない
+   - 送信はせず、まず私に文案を見せてください。私がOKを出してから送ってください
+
+【注意】
+- 社員を評価・採点しない。事実と兆候だけを書く
+- 🆘 の詳細を week レポート側やサマリーの共有部分に漏らさない</pre>
+  </div>
+
+  <!-- 5-3. Slack ワークフローの設定手順 -->
+  <h2>Slack ワークフローの設定手順</h2>
+  <ol class="steps-list">
+    <li>Slack 左サイドバーの「その他」→「自動化」→「ワークフロー」を開く</li>
+    <li>右上の「新規ワークフロー」をクリック</li>
+    <li>開始方法で「スケジュールされた日時」を選び、毎週金曜17:00・繰り返しを「毎週」に設定</li>
+    <li>ステップ追加で「メッセージを送信する」を選び、宛先を全社員のチャンネルにして本文を貼る</li>
+    <li>「フォームで情報を収集する」ステップを追加し、Q1〜Q3 を作る（Q2 はファイル添付の項目を選ぶ）</li>
+    <li>「ユーティリティ」→「分岐を追加」で <code>Q1 = 🆘困ってる・相談したい</code> の条件を作る</li>
+    <li>その分岐の中に、もう一つフォーム（Q4・Q5）を追加する</li>
+    <li>回答の送り先を、非公開チャンネル <code>#レター</code> に設定する</li>
+    <li>右上の「公開する」をクリックして完了</li>
+  </ol>
+  <p class="footnote" style="text-align:left;">※ Slack の画面表示は更新されることがあります。メニュー名が違う場合は
+    「ワークフロー」「分岐」で画面内を検索してください。</p>
+
+  <!-- 5-4. お礼メッセージのランダム表示について -->
+  <div class="warn-box" style="background:var(--warn-bg); border-color:var(--warn-border); color:var(--warn-text); margin-top:32px;">
+    <strong>⚠️ 送信後のお礼メッセージについて</strong>
+    <p>モックでは毎回ちがう文面が出ますが、Slack のワークフロービルダーだけで
+これを実現できるかは未確認です。ワークフロービルダーは「条件で分ける」機能
+（分岐）はありますが、「ランダムに選ぶ」機能は見当たりません。
+
+【現実的なやり方は2つ】
+
+A. Slack 側は固定文にする（いちばん簡単）
+   「受け取りました。今週もおつかれさまでした 🌿」で固定。
+   文面は月に一度など、手で書き換えれば十分です。
+
+B. 月曜の集計時に、Claude Code からお礼を送る（おすすめ）
+   Claude Code が各人の回答を読んだうえで、その人に合った労いを individually DM します。
+   ランダムより気が利きます。「3週続けて成果物を出している人」には
+   その事実に触れた一言を書ける、といったことができます。
+   ※ 送信前に必ず社長の確認を挟むこと。</p>
+  </div>
+
+</div>
+
+</body>
+</html>

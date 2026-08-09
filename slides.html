@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>レター ── 企画書</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="レター">
+<meta property="og:title" content="レター｜企画書">
+<meta property="og:description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<meta property="og:image" content="https://takishizu-mom.github.io/letter/ogp.png">
+<meta property="og:url" content="https://takishizu-mom.github.io/letter/slides.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="index.html">レター</a>
+  <a class="back-link" href="index.html">← トップへ戻る</a>
+</header>
+
+<div class="slide-deck">
+
+  <div class="slide-viewport">
+
+    <!-- 1. 表紙 -->
+    <section class="slide slide-cover active">
+      <h1>レター</h1>
+      <p>── 社員20人が何をやっているか、嘘なく分かる仕組み</p>
+    </section>
+
+    <!-- 2. 課題 -->
+    <section class="slide">
+      <div class="slide-kicker">課題</div>
+      <h2>週報をやめた理由</h2>
+      <p>週報は「自己申告」でした。自己申告には、書く人の意志とは関係なく、
+        よく見せたくなる仕組み上の欠陥があります。</p>
+      <p>これは<strong>社員が悪いのではありません。</strong>
+        「自己申告は盛れる」という、仕組みの側の欠陥です。</p>
+      <p>だから私たちは、週報という「作文」をやめることにしました。</p>
+    </section>
+
+    <!-- 3. なぜ週報は嘘になるか -->
+    <section class="slide">
+      <div class="slide-kicker">構造</div>
+      <h2>なぜ週報は嘘になるか</h2>
+      <p>誰か一人の問題ではなく、このループが自然に起きてしまいます。</p>
+      <div class="loop-diagram">
+        <div class="loop-box">正直に書く</div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-box warn">詰められる</div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-box">次から盛る</div>
+        <div class="loop-arrow">↺</div>
+      </div>
+      <p>一度このループに入ると、週報はどんどん「作文」になっていきます。</p>
+    </section>
+
+    <!-- 4. 発想の転換 -->
+    <section class="slide">
+      <div class="slide-kicker">発想の転換</div>
+      <h2>「正直に書かせる工夫」をやめる</h2>
+      <p>私たちが目指したのは、社員に「正直に書かせる工夫」を重ねることではありません。</p>
+      <p><strong>そもそも嘘のつきようがない記録を見る</strong>、という方向に発想を変えました。</p>
+    </section>
+
+    <!-- 5. レターとは -->
+    <section class="slide">
+      <div class="slide-kicker">レターとは</div>
+      <h2>レターとは</h2>
+      <div class="stat-row">
+        <span class="stat-pill">週1回</span>
+        <span class="stat-pill">金曜17時</span>
+        <span class="stat-pill">所要30秒</span>
+        <span class="stat-pill">3タップ＋ファイル添付</span>
+      </div>
+      <p>Slack から毎週金曜17時に自動で届く、短いフォームです。
+        作文は不要で、選ぶだけ・貼るだけで終わります。</p>
+    </section>
+
+    <!-- 6. 3つの仕掛け -->
+    <section class="slide">
+      <div class="slide-kicker">仕組み</div>
+      <h2>3つの仕掛け</h2>
+      <div class="reason-cards">
+        <div class="reason-card">
+          <h3>① 作文をさせない</h3>
+          <p>選択肢を選ぶだけ。長い文章を書かせないので、盛りようがありません。</p>
+        </div>
+        <div class="reason-card">
+          <h3>② 成果物というモノで示す</h3>
+          <p>言葉の代わりに、実際に作ったもの・出したものを添付してもらいます。</p>
+        </div>
+        <div class="reason-card">
+          <h3>③ SOSは社長直通</h3>
+          <p>困っている人の詳細は、社長にだけ直接届きます。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. 画面イメージ -->
+    <section class="slide" style="align-items:center; text-align:center;">
+      <div class="slide-kicker">画面イメージ</div>
+      <h2>実際の画面を見てみましょう</h2>
+      <p>百聞は一見にしかず。実際に触れるモックをご用意しました。</p>
+      <p><a class="btn btn-lg" href="mock.html">▶ 実際に触ってみる</a></p>
+    </section>
+
+    <!-- 8. 溜まった情報の見え方 -->
+    <section class="slide">
+      <div class="slide-kicker">蓄積</div>
+      <h2>溜まった情報の見え方</h2>
+      <p>回答は Notion の表に自動で溜まっていきます。調子で絞り込めるので、
+        気になる人からすぐに見られます。</p>
+      <table class="mini-table">
+        <thead>
+          <tr><th>名前</th><th>部門</th><th>調子</th><th>成果物</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>山田 太郎</td><td>IT広告</td><td>😊</td><td>📎2件</td></tr>
+          <tr><td>佐藤 花子</td><td>飲食</td><td>😐</td><td>📎1件</td></tr>
+          <tr><td>鈴木 一郎</td><td>IT広告</td><td>🆘</td><td>───</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 9. 公開範囲の設計 -->
+    <section class="slide">
+      <div class="slide-kicker">設計</div>
+      <h2>公開範囲の設計</h2>
+      <table class="mini-table">
+        <thead><tr><th>情報</th><th>見る人</th></tr></thead>
+        <tbody>
+          <tr><td>週次レポート（調子・成果物・ひとこと）</td><td>社長 ＋ 部門リーダー</td></tr>
+          <tr><td>SOS の詳細（困りごとの中身）</td><td>社長のみ</td></tr>
+        </tbody>
+      </table>
+      <p>本音は「誰まで見るか」がはっきりしていないと出てきません。
+        SOSの詳細をリーダーからも見えないようにすることで、
+        言いにくいことも安心して書ける状態を作っています。</p>
+    </section>
+
+    <!-- 10. 費用 -->
+    <section class="slide">
+      <div class="slide-kicker">費用</div>
+      <h2>費用</h2>
+      <table class="mini-table">
+        <thead><tr><th>項目</th><th>費用</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td>Slack</td><td>追加0円</td><td>有料プラン契約済みが前提</td></tr>
+          <tr><td>Slack MCP 接続</td><td>0円</td><td>Slack が公式に無料提供。管理者承認が必要</td></tr>
+          <tr><td>Notion</td><td>0円 〜 1,320円/月</td><td>無料で開始可。ファイル5MB超が出たら Plus 1席</td></tr>
+          <tr><td>Claude Code</td><td>追加0円</td><td>既存契約内</td></tr>
+          <tr><td>中継サービス（Zapier等）</td><td>不要</td><td>Claude Code が代わりをする</td></tr>
+        </tbody>
+      </table>
+      <p><strong>合計 月<span class="num-lg">0</span>円〜<span class="num-lg">1,320</span>円。</strong>20人でも Notion は1席で足ります。</p>
+      <p>Notion のゲストは何人でも無料です。社員19人は Slack しか触らないため、
+        Notion のアカウントが要るのは社長とリーダーだけです。</p>
+    </section>
+
+    <!-- 11. 運用の3つの約束 -->
+    <section class="slide">
+      <div class="slide-kicker">運用</div>
+      <h2>運用の3つの約束</h2>
+      <div class="reason-cards">
+        <div class="reason-card">
+          <h3>① SOSを責めない</h3>
+          <p>🆘 を選んだ人を問い詰めません。早く知れたことを歓迎します。</p>
+        </div>
+        <div class="reason-card">
+          <h3>② 査定に使わない</h3>
+          <p>レターの内容を給与・評価の材料にしません。</p>
+        </div>
+        <div class="reason-card">
+          <h3>③ 成果物ゼロの週があってもいい</h3>
+          <p>準備の週、うまくいかない週があるのは当然です。空欄でOKにします。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. 導入ステップ -->
+    <section class="slide">
+      <div class="slide-kicker">導入</div>
+      <h2>導入ステップ</h2>
+      <ul>
+        <li>① Slack の公式 MCP と Notion を Claude Code につなぐ（準備・所要15分ほど）</li>
+        <li>② Notion に「週次レポート」「SOS相談」の2つの表を作る</li>
+        <li>③ Slack ワークフローを設定し、毎週金曜17時に自動送信されるようにする</li>
+        <li>④ 月曜の朝、Claude Code に合言葉を打つだけで集計・サマリー作成</li>
+      </ul>
+      <p>具体的な手順とコピペ用プロンプトは、次のページにまとめています。</p>
+      <p><a class="btn" href="build.html">🔧 実装フローを見る</a></p>
+    </section>
+
+    <!-- 13. 社長のお道具箱への組み込み提案 -->
+    <section class="slide">
+      <h2>💼 「社長のお道具箱」に入れてもいいかもしれません</h2>
+      <p>この仕組みは単体でも成立しますが、
+        「社長のお道具箱」の道具のひとつとして載せると相性がいいと思いました。</p>
+
+      <div class="reason-cards">
+        <div class="reason-card">
+          <h3>1. 課題が共通している</h3>
+          <p>中小企業の社長のほとんどが「社員が何をやっているか分からない」を抱えていて、
+            しかも「週報をやったけど形骸化した」という失敗まで共通しています。
+            説明しなくても伝わる課題は、機能として強いです。</p>
+        </div>
+        <div class="reason-card">
+          <h3>2. 作りが軽い</h3>
+          <p>Slack と Notion があれば動きます。専用のサーバーもデータベースも要りません。
+            お道具箱側がやるのは「雛形を配る」ことだけで済みます。</p>
+        </div>
+        <div class="reason-card">
+          <h3>3. 毎週動くので、続く</h3>
+          <p>月1回の機能は忘れられますが、毎週金曜に必ず動く仕組みは習慣になります。
+            使われ続ける機能は、解約されにくい機能でもあります。</p>
+        </div>
+      </div>
+
+      <div class="soft-box"><strong>載せ方の案</strong>
+テンプレート配布型がいちばん軽いと思います。
+・Slack ワークフローの雛形
+・社員配布ページ（この資料の「社員に配るページ」がそのまま使えます）
+・週次サマリー生成のプロンプト
+この3点をセットにして、社長が自社のSlackに入れるだけ、という形。</div>
+
+      <div class="warn-box">
+        <strong>⚠️ 注意</strong>
+        <p>ひとつだけ、外せない設計があります。
+
+🆘 の詳細を「社長だけ」に届ける権限設計は、絶対に間違えないでください。
+一度でもリーダーに漏れると、その会社では二度と本音が集まらなくなります。
+機能として提供するなら、ここは設定ミスが起きない作り
+（初期値で社長のみ／変更時に警告を出す）にしておくのが安全です。</p>
+      </div>
+
+      <p>もちろん、この資料ごと自由に使ってもらって構いません。</p>
+    </section>
+
+    <div class="slide-page">1 / 13</div>
+
+  </div>
+
+  <div class="slide-nav">
+    <button type="button" class="btn btn-secondary" data-slide-prev>← 前へ</button>
+    <button type="button" class="btn" data-slide-next>次へ →</button>
+  </div>
+
+</div>
+
+</body>
+</html>

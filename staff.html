@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>レターのご案内</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="レター">
+<meta property="og:title" content="レターのご案内">
+<meta property="og:description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<meta property="og:image" content="https://takishizu-mom.github.io/letter/ogp.png">
+<meta property="og:url" content="https://takishizu-mom.github.io/letter/staff.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="index.html">レター</a>
+  <a class="back-link" href="index.html">← トップへ戻る</a>
+</header>
+
+<div class="container">
+
+  <!-- ① 見出し -->
+  <section class="block" style="margin-top:8px;">
+    <h1 style="margin-bottom:10px;">レターのご案内</h1>
+    <p style="font-size:16px;">毎週金曜17時に、Slack から「レター」が届くようになります。<br>
+      30秒で終わります。今までの週報の代わりです。</p>
+  </section>
+
+  <!-- ② なぜ変えるのか -->
+  <section class="block">
+    <h2>なぜ変えるのか</h2>
+    <p>これまでの週報は、書くのに時間がかかるわりに、<br>
+      みなさんの助けになっていませんでした。</p>
+    <p>レターは「報告させるため」ではなく、<br>
+      困っていることに会社が早く気づくために作りました。</p>
+  </section>
+
+  <!-- ③ やることは3つだけ -->
+  <section class="block">
+    <h2>やることは3つだけ</h2>
+    <div class="step-cards">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <p>今週の調子を3つから選ぶ<br>（😊 / 😐 / 🆘）</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <p>作ったもの・出したものがあれば、ファイルかリンクを貼る<br>（無い週は空欄でOK）</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <p>ひとことあれば書く<br>（任意）</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ 会社からの3つの約束 -->
+  <section class="block">
+    <div class="promise-box">
+      <h2>🤝 会社からの約束</h2>
+      <div class="promise-item">
+        <strong>1. 🆘 を選んでも、絶対に責めません</strong>
+        <span>「困ってる」を早く知りたくて作った仕組みです。<br>選んでくれた方が会社は助かります。</span>
+      </div>
+      <div class="promise-item">
+        <strong>2. レターを人事評価に使いません</strong>
+        <span>給与・査定の材料にはしません。だから、よく見せる必要はありません。</span>
+      </div>
+      <div class="promise-item">
+        <strong>3. 成果物がない週があっても大丈夫です</strong>
+        <span>準備の週も、うまくいかない週もあります。空欄で出してください。</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ⑤ 誰が見るのか -->
+  <section class="block">
+    <h2>誰が見るのか</h2>
+    <table class="visibility-table">
+      <thead>
+        <tr><th>書いた内容</th><th>見る人</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>調子（😊😐🆘）・成果物・ひとこと</td>
+          <td>社長と、あなたの部門のリーダー</td>
+        </tr>
+        <tr>
+          <td>🆘 を選んだときの「困っていること」の中身</td>
+          <td><strong>社長だけ</strong>（リーダーには表示されません）</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px;">🆘 の詳細がリーダーに見えない設計にしたのは、<br>
+      言いにくいことも、そのまま書いてほしいからです。</p>
+  </section>
+
+  <!-- ⑥ 実際の画面を触ってみる -->
+  <section class="block">
+    <h2>▼ こんな画面です。試しに触ってみてください</h2>
+    <p class="practice-note">これは練習用です。ここで送信しても誰にも届きません。</p>
+    <div data-slack-mock></div>
+  </section>
+
+  <!-- ⑦ よくある質問 -->
+  <section class="block">
+    <h2>よくある質問</h2>
+
+    <details class="faq-item">
+      <summary>Q. 出さなかったらどうなりますか？</summary>
+      <p>A. 催促はしますが、罰はありません。ただ、続くときは体調や業務量を心配して声をかけます。</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Q. 忙しくて成果物を貼れないときは？</summary>
+      <p>A. 空欄で構いません。調子の3択だけでも送ってください。</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Q. 🆘 を選ぶと大ごとになりませんか？</summary>
+      <p>A. なりません。社長が個別に声をかけるだけです。周りには知らされません。</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Q. 書いた内容を後から直せますか？</summary>
+      <p>A. できます。Slack の #レター で声をかけてください。</p>
+    </details>
+
+    <details class="faq-item">
+      <summary>Q. 何分かかりますか？</summary>
+      <p>A. 30秒〜1分です。作文は不要です。</p>
+    </details>
+  </section>
+
+  <!-- ⑧ 締め -->
+  <section class="block" style="text-align:center;">
+    <p style="font-size:16px;">うまく書こうとしなくて大丈夫です。<br>
+      そのままの状態を送ってください。</p>
+  </section>
+
+</div>
+
+</body>
+</html>
