@@ -26,6 +26,7 @@
 
   <h1 style="margin-bottom:4px;">実装フロー</h1>
   <p style="color:var(--gray); margin-top:0;">下のプロンプトをそのままコピーして、ご自身の Claude Code に貼り付けてください。</p>
+  <p style="color:var(--gray); margin-top:0;">集計・催促・振り分けはすべて自動。個人で完結するので、リーダーの取りまとめ作業はありません。</p>
 
   <!-- 5-1. フローチャート -->
   <div class="flow-chart">
@@ -58,13 +59,22 @@
     </div>
     <div class="flow-arrow"></div>
 
+    <div class="flow-step flow-step-remind">
+      <div class="flow-step-head">
+        <span class="flow-step-num">04</span>
+        <span class="flow-tag">自動</span>
+      </div>
+      <div class="flow-box">未回答の人へ 18時・19時・20時にリマインド（3択だけでもOK）</div>
+    </div>
+    <div class="flow-arrow"></div>
+
     <div class="flow-box plain">┌── Q1 の答えで分岐 ──┐</div>
 
     <div class="flow-branch">
       <div class="flow-col flow-col-calm">
         <div class="flow-arrow"></div>
         <div class="flow-step-head">
-          <span class="flow-step-num">04</span>
+          <span class="flow-step-num">05</span>
           <span class="flow-tag flow-tag-staff">社員</span>
         </div>
         <div class="flow-box branch-calm"><span class="sq sq-happy"></span><span class="sq sq-meh"></span>そのまま送信</div>
@@ -72,7 +82,7 @@
       <div class="flow-col flow-col-sos">
         <div class="flow-arrow"></div>
         <div class="flow-step-head">
-          <span class="flow-step-num">05</span>
+          <span class="flow-step-num">06</span>
           <span class="flow-tag flow-tag-staff">社員</span>
         </div>
         <div class="flow-box branch-sos"><span class="sq sq-sos"></span>詳細欄が追加で出る</div>
@@ -83,7 +93,7 @@
 
     <div class="flow-step flow-step-slack">
       <div class="flow-step-head">
-        <span class="flow-step-num">06</span>
+        <span class="flow-step-num">07</span>
         <span class="flow-tag">自動</span>
       </div>
       <div class="flow-box">非公開チャンネルに回答が溜まる</div>
@@ -92,16 +102,16 @@
 
     <div class="flow-step flow-step-claude">
       <div class="flow-step-head">
-        <span class="flow-step-num">07</span>
-        <span class="flow-tag flow-tag-boss">社長</span>
+        <span class="flow-step-num">08</span>
+        <span class="flow-tag">自動</span>
       </div>
-      <div class="flow-box">月曜朝：社長が Claude Code に合言葉を打つ</div>
+      <div class="flow-box">金曜 21:00：Claude が自動で集計を開始</div>
     </div>
     <div class="flow-arrow"></div>
 
     <div class="flow-step flow-step-claude">
       <div class="flow-step-head">
-        <span class="flow-step-num">08</span>
+        <span class="flow-step-num">09</span>
         <span class="flow-tag">自動</span>
       </div>
       <div class="flow-box">Claude Code が Slack を読む</div>
@@ -115,7 +125,7 @@
       <div class="flow-col flow-step-claude">
         <div class="flow-arrow"></div>
         <div class="flow-step-head">
-          <span class="flow-step-num">09</span>
+          <span class="flow-step-num">10</span>
           <span class="flow-tag">自動</span>
         </div>
         <div class="flow-box">週次レポートDB<br>社長＋リーダー</div>
@@ -123,7 +133,7 @@
       <div class="flow-col flow-step-claude">
         <div class="flow-arrow"></div>
         <div class="flow-step-head">
-          <span class="flow-step-num">10</span>
+          <span class="flow-step-num">11</span>
           <span class="flow-tag">自動</span>
         </div>
         <div class="flow-box">SOS相談DB<br>社長のみ</div>
@@ -134,7 +144,7 @@
 
     <div class="flow-step flow-step-claude">
       <div class="flow-step-head">
-        <span class="flow-step-num">11</span>
+        <span class="flow-step-num">12</span>
         <span class="flow-tag">自動</span>
       </div>
       <div class="flow-box">週次サマリー1枚が出力される</div>
@@ -201,15 +211,15 @@ DB1 には要フォローの詳細を一切書かず、「要フォロー」に�
 作り終わったら、2つの DB の URL を教えてください。</pre>
   </div>
 
-  <p class="copy-block-desc">③ 毎週月曜の朝に、社長がそのまま打ち込むだけの合言葉です。Slack の回答を集計して、Notion に振り分けてくれます。</p>
+  <p class="copy-block-desc">③ 毎週金曜21時に自動で動く、集計の指示文です。スケジュール機能（Cowork の定期タスクなど）に登録すれば、社長は何もしなくても Notion に振り分けられ、サマリーが届きます。</p>
   <div class="copy-block">
     <div class="copy-block-header">
-      <span>ブロック3：毎週の集計（月曜の朝に打つ合言葉）</span>
+      <span>ブロック3：毎週の集計（金曜21時に自動実行）</span>
       <button type="button" class="copy-btn" data-target="block3">コピー</button>
     </div>
     <pre class="copy-text" id="block3">レターの集計をお願いします。
 
-1. Slack の #レター チャンネルから、先週金曜〜今日までの回答をすべて読む
+1. Slack の #レター チャンネルから、今日17時以降にたまった回答をすべて読む
 2. 各回答を Notion の「週次レポート」DB に1行ずつ追加する
    - 添付ファイルがあれば、ファイル本体を Notion にアップロードして紐づける
      （Notion の File Upload API を使う。20MBまでは1回で送れる）
@@ -232,7 +242,11 @@ DB1 には要フォローの詳細を一切書かず、「要フォロー」に�
 
 【注意】
 - 社員を評価・採点しない。事実と兆候だけを書く
-- 要フォロー の詳細を week レポート側やサマリーの共有部分に漏らさない</pre>
+- 要フォロー の詳細を week レポート側やサマリーの共有部分に漏らさない
+
+※この指示文は「毎週金曜21時に自動実行」する前提です。
+   スケジュール登録の方法が分からなければ、まず「この集計を毎週金曜21時に
+   自動で実行したい。設定方法を教えて」と Claude に聞いてください。</pre>
   </div>
 
   <!-- 5-3. Slack ワークフローの設定手順 -->
@@ -247,9 +261,16 @@ DB1 には要フォローの詳細を一切書かず、「要フォロー」に�
     <li>その分岐の中に、もう一つフォーム（Q4・Q5）を追加する</li>
     <li>回答の送り先を、非公開チャンネル <code>#レター</code> に設定する</li>
     <li>右上の「公開する」をクリックして完了</li>
+    <li>リマインド用のワークフローを3本追加する。開始条件はそれぞれ
+      金曜18:00／19:00／20:00 のスケジュール起動。送り先は全社員のチャンネル。本文：
+      「レターがまだの方へ：3択（順調でした／ちょっと遅れ気味／困ってる・相談したい）を
+      選ぶだけでもOKです。30秒で終わります」</li>
   </ol>
   <p class="footnote" style="text-align:left;">※ Slack の画面表示は更新されることがあります。メニュー名が違う場合は
     「ワークフロー」「分岐」で画面内を検索してください。</p>
+  <p class="footnote" style="text-align:left;">※ Slack の標準機能では「未回答の人だけ」への自動送信は難しいため、全体向けの
+    リマインドにしています。個別リマインドにしたい場合は、金曜18〜20時にも
+    Claude のスケジュール実行で未回答チェックを走らせる方法があります（上級編）。</p>
 
   <!-- 5-4. お礼メッセージのランダム表示について -->
   <div class="warn-box" style="margin-top:32px;">
@@ -264,7 +285,7 @@ A. Slack 側は固定文にする（いちばん簡単）
    「受け取りました。今週もおつかれさまでした」で固定。
    文面は月に一度など、手で書き換えれば十分です。
 
-B. 月曜の集計時に、Claude Code からお礼を送る（おすすめ）
+B. 金曜21時の集計時に、Claude からお礼を送る（おすすめ）
    Claude Code が各人の回答を読んだうえで、その人に合った労いを individually DM します。
    ランダムより気が利きます。「3週続けて成果物を出している人」には
    その事実に触れた一言を書ける、といったことができます。

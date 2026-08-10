@@ -725,7 +725,7 @@ textarea.field-error, input.field-error{ border-color:var(--danger-text); }
 .note-box-body{
   white-space:pre-line;
   overflow:hidden;
-  max-height:200px;
+  max-height:520px;
   opacity:1;
   margin-top:8px;
   transition:max-height .35s ease, opacity .3s ease, margin-top .35s ease;
@@ -960,6 +960,8 @@ textarea.field-error, input.field-error{ border-color:var(--danger-text); }
 .flow-step-slack .flow-box{ border-left-color:var(--teal); }
 .flow-step-claude .flow-step-num{ color:var(--accent-dark); }
 .flow-step-claude .flow-box{ border-left-color:var(--accent-dark); }
+.flow-step-remind .flow-step-num{ color:#a4890a; }
+.flow-step-remind .flow-box{ border-left-color:var(--yellow); }
 
 /* 分岐の色分け：コーラル（🆘側）／黄（通常側） */
 .flow-col-calm .flow-step-num{ color:#a4890a; }
