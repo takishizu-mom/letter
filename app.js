@@ -165,6 +165,29 @@
   }
 
   /* ------------------------------------------------------------------
+   * mock.html：週の切り替えチップ（ふつうの週／会議があった週）
+   * ---------------------------------------------------------------- */
+  function initWeekToggle() {
+    var toggle = document.querySelector(".week-toggle");
+    if (!toggle) return;
+
+    var buttons = toggle.querySelectorAll(".week-toggle-btn");
+    var mockContainer = document.querySelector("[data-slack-mock]");
+    if (!mockContainer) return;
+
+    buttons.forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        buttons.forEach(function (b) { b.classList.remove("active"); });
+        btn.classList.add("active");
+
+        var isMeeting = btn.getAttribute("data-week") === "meeting";
+        var frame = mockContainer.querySelector(".slack-frame");
+        if (frame) frame.classList.toggle("meeting-week", isMeeting);
+      });
+    });
+  }
+
+  /* ------------------------------------------------------------------
    * build.html：コピー ボタン
    * ---------------------------------------------------------------- */
   function initCopyButtons() {
@@ -225,6 +248,26 @@
   function renderSlackMock(container) {
     slackMockSeq += 1;
     var uid = "sm" + slackMockSeq;
+    var todoFeature = container.getAttribute("data-todo-feature") === "true";
+
+    var meetingTodoBlockHtml = todoFeature ?
+      '<div class="meeting-todo-block">' +
+        '<div class="meeting-todo-text">先週の企画会議で、あなたのToDoが3件あります。</div>' +
+        '<button type="button" class="btn btn-outline btn-block" data-go="t">ToDoを確認する</button>' +
+      '</div>' : '';
+
+    var screenTHtml = todoFeature ?
+      '<div class="slack-screen screen-t">' +
+        '<div class="canvas-frame">' +
+          '<div class="canvas-title">あなたのToDo（8/7 企画会議）</div>' +
+          '<div class="canvas-desc">チェックすると、金曜21時の集計に自動で反映されます。ここはあなた専用のページで、いつでも開けます。</div>' +
+          '<label class="todo-item"><input type="checkbox" class="todo-check"><span class="todo-box"></span><span class="todo-label">新規案件Aの見積もりを作る（8/14まで）</span></label>' +
+          '<label class="todo-item"><input type="checkbox" class="todo-check"><span class="todo-box"></span><span class="todo-label">LP修正の依頼文をデザイナーに送る（8/12まで）</span></label>' +
+          '<label class="todo-item"><input type="checkbox" class="todo-check"><span class="todo-box"></span><span class="todo-label">B社への請求書を経理に回す（8/15まで）</span></label>' +
+          '<div class="canvas-note">未完了のToDoは、翌週のレターにも自動で載ります</div>' +
+          '<button type="button" class="btn btn-block" data-go="a" data-no-reset="true">レターに戻る</button>' +
+        '</div>' +
+      '</div>' : '';
 
     container.innerHTML =
       '<div class="slack-frame">' +
@@ -238,6 +281,7 @@
               'おつかれさまです。今週もありがとうございました。\n30秒で終わります。\n\n' +
               'うまくいかなかった週も、そのまま出してOKです。\nきれいにまとめる必要はありません。' +
             '</div>' +
+            meetingTodoBlockHtml +
             '<button type="button" class="btn btn-block" data-go="b">レターを書く</button>' +
           '</div>' +
 
@@ -320,6 +364,8 @@
             '</div>' +
           '</div>' +
 
+          screenTHtml +
+
         '</div>' +
       '</div>';
 
@@ -329,17 +375,20 @@
       c: container.querySelector(".screen-c"),
       d: container.querySelector(".screen-d")
     };
+    if (todoFeature) {
+      screens.t = container.querySelector(".screen-t");
+    }
 
     function show(key) {
       Object.keys(screens).forEach(function (k) {
-        screens[k].classList.toggle("active", k === key);
+        if (screens[k]) screens[k].classList.toggle("active", k === key);
       });
     }
 
     container.querySelectorAll("[data-go]").forEach(function (btn) {
       btn.addEventListener("click", function () {
         var target = btn.getAttribute("data-go");
-        if (target === "a") resetForm();
+        if (target === "a" && btn.getAttribute("data-no-reset") !== "true") resetForm();
         show(target);
       });
     });
@@ -470,6 +519,7 @@
       screens.b.querySelectorAll('input[type="url"]').forEach(function (u) { u.value = ""; });
       fileChips.innerHTML = "";
       revealBlock.classList.remove("show");
+      container.querySelectorAll(".todo-check").forEach(function (cb) { cb.checked = false; });
       if (noteToggle && noteTitle && noteBody) {
         noteToggle.setAttribute("aria-expanded", "true");
         noteToggle.textContent = "−";
@@ -495,5 +545,6 @@
     initFilters();
     initCopyButtons();
     initSlackMocks();
+    initWeekToggle();
   });
 })();

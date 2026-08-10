@@ -42,7 +42,11 @@
 
   <!-- タブ①：社員の画面 -->
   <div class="tab-panel active" id="tab-staff">
-    <div data-slack-mock></div>
+    <div class="week-toggle">
+      <button type="button" class="week-toggle-btn active" data-week="normal">ふつうの週</button>
+      <button type="button" class="week-toggle-btn" data-week="meeting">会議があった週</button>
+    </div>
+    <div data-slack-mock data-todo-feature="true"></div>
   </div>
 
   <!-- タブ②：社長の画面 -->
@@ -153,6 +157,10 @@
 提出 <span class="num-lg">17/19</span>名（未提出：2名）
 
 <span class="sq sq-happy"></span>順調 12名 ／ <span class="sq sq-meh"></span>遅れ気味 3名 ／ <span class="sq sq-sos"></span>要フォロー 2名
+
+━━━ 会議ToDo ━━━
+消化 8/11件。期限超過が1件（IT広告・見積もり）
+未完了3件は翌週のレターに繰り越しました
 
 ━━━ 今週すぐ動いたほうがいいこと ━━━
 ・（IT広告）新規案件の入稿が2週連続で遅延。人手が足りていない可能性
