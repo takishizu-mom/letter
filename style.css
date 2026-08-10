@@ -230,6 +230,11 @@ strong{ color:var(--highlight); }
   color:var(--gray);
   font-size:16px;
 }
+.top-hero p.hero-tagline{
+  margin-top:2px;
+  font-size:13px;
+  color:var(--gray);
+}
 .hero-visual{
   overflow:hidden;
   border-radius:var(--radius);
