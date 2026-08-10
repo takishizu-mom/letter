@@ -39,6 +39,56 @@
   }
 
   /* ------------------------------------------------------------------
+   * オープニング演出（index.html）
+   * ---------------------------------------------------------------- */
+  function initSplash() {
+    var overlay = document.getElementById("splash");
+    if (!overlay) return;
+
+    var SPLASH_KEY = "letterSplashDone";
+    var FADE_IN_MS = 800;
+    var HOLD_MS = 1000;
+    var FADE_OUT_MS = 500;
+
+    function removeOverlay() {
+      if (!overlay || !overlay.parentNode) return;
+      overlay.parentNode.removeChild(overlay);
+    }
+
+    var reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (sessionStorage.getItem(SPLASH_KEY) || reduceMotion) {
+      sessionStorage.setItem(SPLASH_KEY, "1");
+      removeOverlay();
+      return;
+    }
+
+    sessionStorage.setItem(SPLASH_KEY, "1");
+
+    var img = overlay.querySelector(".splash-img");
+    var holdTimer;
+    var fadedOut = false;
+
+    function fadeOut() {
+      if (fadedOut) return;
+      fadedOut = true;
+      clearTimeout(holdTimer);
+      overlay.classList.add("splash-hide");
+      overlay.addEventListener("transitionend", removeOverlay, { once: true });
+      setTimeout(removeOverlay, FADE_OUT_MS + 150);
+    }
+
+    overlay.addEventListener("click", fadeOut);
+
+    setTimeout(function () {
+      if (img) img.classList.add("splash-show");
+    }, 20);
+
+    holdTimer = setTimeout(fadeOut, FADE_IN_MS + HOLD_MS);
+  }
+
+  /* ------------------------------------------------------------------
    * 読み進みバー（slides.html）
    * ---------------------------------------------------------------- */
   function initProgressBar() {
@@ -411,6 +461,7 @@
 
   /* ------------------------------------------------------------------ */
   document.addEventListener("DOMContentLoaded", function () {
+    initSplash();
     initProgressBar();
     initTabs();
     initFilters();
