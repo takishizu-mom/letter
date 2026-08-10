@@ -25,7 +25,7 @@
 <div class="container">
 
   <h1 style="margin-bottom:4px;">経営分析（デモ）</h1>
-  <p style="color:var(--gray); margin-top:0;">導入すると、こんな分析が自動で蓄積されます。ここに表示しているのはサンプルデータです。</p>
+  <p style="color:var(--gray); margin-top:0;">導入すると、こんな分析が自動で蓄積されます。ここに表示しているのはサンプルデータです。グラフのバーをタップすると、その内訳の社員一覧が開きます。</p>
 
   <h2>提出率の推移</h2>
   <div class="analytics-card">
@@ -61,6 +61,7 @@
         <div class="chart-bar-week">8/3週</div>
       </div>
     </div>
+    <div class="drilldown-panel" id="submitDrilldown" hidden></div>
   </div>
 
   <h2>調子の内訳推移</h2>
@@ -120,6 +121,7 @@
         <div class="chart-stack-week">8/3週</div>
       </div>
     </div>
+    <div class="drilldown-panel" id="moodDrilldown" hidden></div>
   </div>
 
   <h2>SOS件数と対応状況</h2>
@@ -140,9 +142,9 @@
 
   <h2>気になる兆候（サンプル）</h2>
   <ul class="signal-list">
-    <li>3週連続で成果物の添付がない社員が1名</li>
-    <li>IT広告部門で新規案件の入稿遅延が2週連続</li>
-    <li>飲食部門でシフト調整の負荷が1名に偏っている</li>
+    <li>高橋 健（飲食）… 3週連続で成果物の添付がありません</li>
+    <li>中村 拓也（飲食）… 2週連続で要フォロー。SOSは対応中です</li>
+    <li>佐藤 花子（飲食）… 4週のうち3週が遅れ気味。業務量の確認をおすすめします</li>
   </ul>
 
   <div class="key-box">

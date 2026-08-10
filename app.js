@@ -537,6 +537,271 @@
     });
   }
 
+  /* ------------------------------------------------------------------
+   * analytics.html：グラフのドリルダウン（バー／ブロックをタップ→社員一覧）
+   * サンプルデータのみ。社員データはここ1箇所で定義し、
+   * 提出率パネル・調子パネルの両方から同じ配列を参照することで
+   * 2つのパネル間で状態が食い違わないようにする。
+   * ---------------------------------------------------------------- */
+  var ANALYTICS_WEEKS = ["6/29", "7/6", "7/13", "7/20", "7/27", "8/3"];
+
+  var ANALYTICS_STAFF = [
+    { name: "山田 太郎", dept: "IT広告", weeks: [
+      { status: "happy", out: 2 }, { status: "happy", out: 1 }, { status: "happy", out: 2 },
+      { status: "happy", out: 2 }, { status: "happy", out: 1 }, { status: "happy", out: 2 }
+    ]},
+    { name: "佐藤 花子", dept: "飲食", weeks: [
+      { status: "happy", out: 1 }, { status: "happy", out: 1 }, { status: "meh", out: 1 },
+      { status: "meh", out: 1 }, { status: "meh", out: 1 }, { status: "happy", out: 2 }
+    ]},
+    { name: "鈴木 一郎", dept: "IT広告", weeks: [
+      { status: "happy", out: 1 }, { status: "happy", out: 2 }, { status: "happy", out: 1 },
+      { status: "happy", out: 0 }, { status: "happy", out: 1 }, { status: "happy", out: 2 }
+    ]},
+    { name: "高橋 健", dept: "飲食", weeks: [
+      { status: "happy", out: 0 }, { status: "happy", out: 0 }, { status: "happy", out: 0 },
+      { status: "unsub" }, { status: "meh", out: 1 }, { status: "happy", out: 1 }
+    ]},
+    { name: "田中 美咲", dept: "IT広告", weeks: [
+      { status: "meh", out: 1 }, { status: "meh", out: 1 }, { status: "happy", out: 1 },
+      { status: "happy", out: 2 }, { status: "meh", out: 1 }, { status: "happy", out: 1 }
+    ]},
+    { name: "伊藤 大輔", dept: "IT広告", weeks: [
+      { status: "happy", out: 1 }, { status: "sos", out: 1, note: "first" }, { status: "sos", out: 1, note: "done" },
+      { status: "happy", out: 1 }, { status: "happy", out: 2 }, { status: "happy", out: 1 }
+    ]},
+    { name: "渡辺 さくら", dept: "飲食", weeks: [
+      { status: "meh", out: 1 }, { status: "meh", out: 1 }, { status: "happy", out: 1 },
+      { status: "meh", out: 1 }, { status: "happy", out: 2 }, { status: "happy", out: 1 }
+    ]},
+    { name: "中村 拓也", dept: "飲食", weeks: [
+      { status: "happy", out: 1 }, { status: "happy", out: 1 }, { status: "happy", out: 1 },
+      { status: "sos", out: 2, note: "first" }, { status: "sos", out: 2, note: "ongoing" }, { status: "happy", out: 1 }
+    ]},
+    { name: "小林 由紀", dept: "IT広告", weeks: [
+      { status: "sos", out: 1, note: "first" }, { status: "happy", out: 1 }, { status: "unsub" },
+      { status: "happy", out: 2 }, { status: "happy", out: 1 }, { status: "meh", out: 1 }
+    ]},
+    { name: "加藤 翔", dept: "IT広告", weeks: [
+      { status: "unsub" }, { status: "happy", out: 1 }, { status: "meh", out: 1 },
+      { status: "happy", out: 2 }, { status: "happy", out: 1 }, { status: "happy", out: 2 }
+    ]},
+    { name: "吉田 彩", dept: "飲食", weeks: [
+      { status: "happy", out: 1 }, { status: "unsub" }, { status: "happy", out: 1 },
+      { status: "meh", out: 1 }, { status: "happy", out: 2 }, { status: "sos", out: 1, note: "first" }
+    ]},
+    { name: "山口 直樹", dept: "飲食", weeks: [
+      { status: "happy", out: 2 }, { status: "unsub" }, { status: "sos", out: 1, note: "first" },
+      { status: "happy", out: 1 }, { status: "happy", out: 2 }, { status: "meh", out: 1 }
+    ]},
+    { name: "松本 恵", dept: "IT広告", weeks: [
+      { status: "meh", out: 1 }, { status: "meh", out: 1 }, { status: "meh", out: 1 },
+      { status: "happy", out: 2 }, { status: "happy", out: 1 }, { status: "happy", out: 1 }
+    ]},
+    { name: "井上 隆", dept: "IT広告", weeks: [
+      { status: "sos", out: 1, note: "first" }, { status: "happy", out: 2 }, { status: "happy", out: 1 },
+      { status: "happy", out: 1 }, { status: "unsub" }, { status: "happy", out: 2 }
+    ]},
+    { name: "木村 美穂", dept: "飲食", weeks: [
+      { status: "meh", out: 1 }, { status: "happy", out: 1 }, { status: "unsub" },
+      { status: "happy", out: 1 }, { status: "happy", out: 2 }, { status: "happy", out: 1 }
+    ]},
+    { name: "林 慎一", dept: "飲食", weeks: [
+      { status: "happy", out: 1 }, { status: "sos", out: 1, note: "first" }, { status: "happy", out: 1 },
+      { status: "happy", out: 2 }, { status: "happy", out: 1 }, { status: "meh", out: 1 }
+    ]},
+    { name: "清水 亜衣", dept: "IT広告", weeks: [
+      { status: "happy", out: 2 }, { status: "meh", out: 1 }, { status: "happy", out: 1 },
+      { status: "sos", out: 1, note: "first" }, { status: "happy", out: 2 }, { status: "happy", out: 1 }
+    ]},
+    { name: "森田 光", dept: "飲食", weeks: [
+      { status: "unsub" }, { status: "happy", out: 1 }, { status: "meh", out: 1 },
+      { status: "happy", out: 1 }, { status: "happy", out: 1 }, { status: "happy", out: 2 }
+    ]},
+    { name: "岡田 涼", dept: "IT広告", weeks: [
+      { status: "happy", out: 1 }, { status: "unsub" }, { status: "happy", out: 2 },
+      { status: "meh", out: 1 }, { status: "sos", out: 1, note: "first" }, { status: "happy", out: 1 }
+    ]}
+  ];
+
+  var ANALYTICS_SQ_CLASS = { happy: "sq-happy", meh: "sq-meh", sos: "sq-sos", unsub: "sq-none" };
+  var ANALYTICS_MOOD_LABEL = { happy: "順調", meh: "遅れ気味", sos: "要フォロー" };
+
+  function analyticsOutText(out) {
+    return out === 0 ? "成果物なし" : "成果物" + out + "件";
+  }
+
+  function analyticsMehStreak(person, weekIndex) {
+    var streak = 0;
+    for (var i = weekIndex; i >= 0; i--) {
+      if (person.weeks[i].status === "meh") { streak++; } else { break; }
+    }
+    return streak;
+  }
+
+  function analyticsSubmitStatusText(week) {
+    if (week.status === "unsub") return "未提出";
+    return ANALYTICS_MOOD_LABEL[week.status] + "・" + analyticsOutText(week.out);
+  }
+
+  function analyticsMoodStatusText(person, weekIndex) {
+    var week = person.weeks[weekIndex];
+    if (week.status === "happy") return analyticsOutText(week.out);
+    if (week.status === "meh") {
+      var streak = analyticsMehStreak(person, weekIndex);
+      return streak >= 2 ? (streak + "週連続で遅れ気味") : analyticsOutText(week.out);
+    }
+    if (week.status === "sos") {
+      if (week.note === "ongoing") return "SOS 対応中";
+      if (week.note === "done") return "SOS 完了";
+      return "今週が初めて";
+    }
+    return "";
+  }
+
+  function analyticsRowHtml(person, statusText, isUnsub, sqClass) {
+    return '<div class="drilldown-row' + (isUnsub ? " is-unsub" : "") + '">' +
+      '<span class="sq ' + sqClass + '"></span>' +
+      '<span class="drilldown-name">' + person.name + '</span>' +
+      '<span class="drilldown-dept">' + person.dept + '</span>' +
+      '<span class="drilldown-status">' + statusText + '</span>' +
+      '</div>';
+  }
+
+  function renderAnalyticsSubmitPanel(panel, weekIndex) {
+    var unsubRows = [];
+    var restRows = [];
+    var submittedCount = 0;
+
+    ANALYTICS_STAFF.forEach(function (person) {
+      var week = person.weeks[weekIndex];
+      var rowHtml = analyticsRowHtml(
+        person,
+        analyticsSubmitStatusText(week),
+        week.status === "unsub",
+        ANALYTICS_SQ_CLASS[week.status]
+      );
+      if (week.status === "unsub") {
+        unsubRows.push(rowHtml);
+      } else {
+        restRows.push(rowHtml);
+        submittedCount++;
+      }
+    });
+
+    var head = ANALYTICS_WEEKS[weekIndex] + "週の提出状況（" + submittedCount + "/" + ANALYTICS_STAFF.length + "名）";
+
+    panel.innerHTML =
+      '<div class="drilldown-head">' + head + '</div>' +
+      '<div class="drilldown-rows">' + unsubRows.join("") + restRows.join("") + '</div>';
+    panel.hidden = false;
+  }
+
+  function renderAnalyticsMoodPanel(panel, weekIndex, mood) {
+    var rows = [];
+
+    ANALYTICS_STAFF.forEach(function (person) {
+      var week = person.weeks[weekIndex];
+      if (week.status !== mood) return;
+      rows.push(analyticsRowHtml(
+        person,
+        analyticsMoodStatusText(person, weekIndex),
+        false,
+        ANALYTICS_SQ_CLASS[mood]
+      ));
+    });
+
+    var head = ANALYTICS_WEEKS[weekIndex] + "週・" + ANALYTICS_MOOD_LABEL[mood] + "（" + rows.length + "名）";
+    var noteHtml = mood === "sos" ?
+      '<div class="drilldown-sos-note">この一覧は社長のみ表示されます。困っている内容の中身は、さらに社長だけが見られます。</div>' : "";
+
+    panel.innerHTML =
+      '<div class="drilldown-head">' + head + '</div>' +
+      '<div class="drilldown-rows">' + rows.join("") + '</div>' +
+      noteHtml;
+    panel.hidden = false;
+  }
+
+  function initAnalyticsDrilldown() {
+    var barTracks = document.querySelectorAll(".chart-bar-track");
+    var stackItems = document.querySelectorAll(".chart-stack-item");
+    var submitPanel = document.getElementById("submitDrilldown");
+    var moodPanel = document.getElementById("moodDrilldown");
+    if (!barTracks.length && !stackItems.length) return;
+
+    var openSubmitIndex = null;
+    var openMoodKey = null;
+
+    barTracks.forEach(function (track, weekIndex) {
+      track.setAttribute("role", "button");
+      track.setAttribute("tabindex", "0");
+      track.setAttribute("aria-label", ANALYTICS_WEEKS[weekIndex] + "週の提出状況を見る");
+
+      function toggleSubmit() {
+        if (!submitPanel) return;
+        if (openSubmitIndex === weekIndex) {
+          submitPanel.hidden = true;
+          submitPanel.innerHTML = "";
+          track.classList.remove("is-selected");
+          openSubmitIndex = null;
+          return;
+        }
+        barTracks.forEach(function (t) { t.classList.remove("is-selected"); });
+        track.classList.add("is-selected");
+        openSubmitIndex = weekIndex;
+        renderAnalyticsSubmitPanel(submitPanel, weekIndex);
+      }
+
+      track.addEventListener("click", toggleSubmit);
+      track.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+          e.preventDefault();
+          toggleSubmit();
+        }
+      });
+    });
+
+    stackItems.forEach(function (item, weekIndex) {
+      var segs = item.querySelectorAll(".chart-stack-seg");
+      segs.forEach(function (seg) {
+        var mood = seg.classList.contains("seg-happy") ? "happy" :
+          seg.classList.contains("seg-meh") ? "meh" :
+          seg.classList.contains("seg-sos") ? "sos" : null;
+        if (!mood) return;
+        var key = weekIndex + "-" + mood;
+
+        seg.setAttribute("role", "button");
+        seg.setAttribute("tabindex", "0");
+        seg.setAttribute("aria-label", ANALYTICS_WEEKS[weekIndex] + "週・" + ANALYTICS_MOOD_LABEL[mood] + "の内訳を見る");
+
+        function toggleMood() {
+          if (!moodPanel) return;
+          if (openMoodKey === key) {
+            moodPanel.hidden = true;
+            moodPanel.innerHTML = "";
+            seg.classList.remove("is-selected");
+            openMoodKey = null;
+            return;
+          }
+          document.querySelectorAll(".chart-stack-seg.is-selected").forEach(function (s) {
+            s.classList.remove("is-selected");
+          });
+          seg.classList.add("is-selected");
+          openMoodKey = key;
+          renderAnalyticsMoodPanel(moodPanel, weekIndex, mood);
+        }
+
+        seg.addEventListener("click", toggleMood);
+        seg.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+            e.preventDefault();
+            toggleMood();
+          }
+        });
+      });
+    });
+  }
+
   /* ------------------------------------------------------------------ */
   document.addEventListener("DOMContentLoaded", function () {
     initSplash();
@@ -546,5 +811,6 @@
     initCopyButtons();
     initSlackMocks();
     initWeekToggle();
+    initAnalyticsDrilldown();
   });
 })();

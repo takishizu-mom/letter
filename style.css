@@ -971,6 +971,7 @@ textarea.field-error, input.field-error{ border-color:var(--danger-text); }
 .sq-happy{ background:var(--teal); }
 .sq-meh{ background:var(--yellow); }
 .sq-sos{ background:var(--highlight); }
+.sq-none{ background:var(--gray); }
 
 .table-heading{
   display:flex;
@@ -1392,6 +1393,79 @@ section.block{ margin:44px 0; }
   color:var(--gray);
   margin-top:6px;
   white-space:nowrap;
+}
+
+/* ---------- グラフのドリルダウン（バー／ブロックをタップ→社員一覧） ---------- */
+.chart-bar-track, .chart-stack-seg{
+  cursor:pointer;
+  transition:filter .15s ease, box-shadow .15s ease;
+}
+.chart-bar-track:hover .chart-bar-fill,
+.chart-stack-seg:hover{
+  filter:brightness(1.08);
+}
+.chart-bar-track:focus-visible,
+.chart-stack-seg:focus-visible{
+  outline:2px solid var(--accent-dark);
+  outline-offset:2px;
+}
+.chart-bar-track.is-selected,
+.chart-stack-seg.is-selected{
+  box-shadow:inset 0 0 0 2px var(--accent-dark);
+}
+
+.drilldown-panel:not([hidden]){
+  margin-top:18px;
+  padding-top:16px;
+  border-top:1px solid var(--border);
+}
+.drilldown-head{
+  font-size:14px;
+  font-weight:700;
+  color:var(--accent-dark);
+  margin-bottom:10px;
+}
+.drilldown-rows{
+  display:flex;
+  flex-direction:column;
+}
+.drilldown-row{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  column-gap:10px;
+  row-gap:2px;
+  padding:8px 6px;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+.drilldown-row:last-child{ border-bottom:none; }
+.drilldown-row.is-unsub{
+  background:var(--highlight-light);
+  border-radius:4px;
+}
+.drilldown-row .sq{ flex:0 0 auto; margin-right:0; }
+.drilldown-name{
+  font-weight:700;
+  color:var(--text);
+}
+.drilldown-dept{
+  color:var(--gray);
+  font-size:12px;
+}
+.drilldown-status{
+  color:var(--gray);
+  font-size:12.5px;
+  margin-left:auto;
+}
+.drilldown-sos-note{
+  margin-top:14px;
+  padding:12px 14px;
+  background:var(--accent-light);
+  border-radius:4px;
+  font-size:12.5px;
+  color:var(--accent-dark);
+  line-height:1.6;
 }
 
 .stat-cards{
