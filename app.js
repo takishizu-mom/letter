@@ -6,19 +6,19 @@
   "use strict";
 
   /* ------------------------------------------------------------------
-   * 送信後のお礼メッセージ（😊😐 の場合・ランダム10種）
+   * 送信後のお礼メッセージ（順調／遅れ気味 の場合・ランダム10種）
    * ---------------------------------------------------------------- */
   var THANKS = [
-    "今週もおつかれさまでした。ゆっくり休んでください 🌿",
-    "がんばってるの、ちゃんと見てます。よい週末を 🙌",
-    "ありがとうございます。今週の分、しっかり切り替えてくださいね ☕",
+    "今週もおつかれさまでした。ゆっくり休んでください",
+    "がんばってるの、ちゃんと見てます。よい週末を",
+    "ありがとうございます。今週の分、しっかり切り替えてくださいね",
     "おつかれさまでした。週末はどうか無理せず。また来週！",
     "ありがとう。あなたが動いてくれたぶん、会社は前に進んでいます",
-    "今週もありがとうございました。ゆっくりしてください 🌙",
-    "おつかれさまです。ちゃんと届きました。よい週末を 🌿",
+    "今週もありがとうございました。ゆっくりしてください",
+    "おつかれさまです。ちゃんと届きました。よい週末を",
     "ありがとうございます。少し肩の力を抜いてくださいね",
     "今週もおつかれさまでした。よく持ちこたえました",
-    "受け取りました。あとは週末に任せましょう 🍺"
+    "受け取りました。あとは週末に任せましょう"
   ];
 
   var THANKS_STORAGE_KEY = "letterThanksLastIndex";
@@ -197,12 +197,12 @@
 
     container.innerHTML =
       '<div class="slack-frame">' +
-        '<div class="slack-topbar">💬 # レター</div>' +
+        '<div class="slack-topbar"># レター</div>' +
         '<div class="slack-body">' +
 
           /* 画面A */
           '<div class="slack-screen screen-a active">' +
-            '<div class="slack-msg-title">✉️ レターの時間です</div>' +
+            '<div class="slack-msg-title">レターの時間です</div>' +
             '<div class="slack-msg-body">' +
               'おつかれさまです。今週もありがとうございました。\n30秒で終わります。\n\n' +
               'うまくいかなかった週も、そのまま出してOKです。\nきれいにまとめる必要はありません。' +
@@ -216,9 +216,9 @@
 
             '<div class="q-block">' +
               '<div class="q-label">Q1. 今週の調子はどうでしたか？</div>' +
-              '<label class="radio-option"><input type="radio" name="' + uid + '-q1" value="happy">😊 順調でした</label>' +
-              '<label class="radio-option"><input type="radio" name="' + uid + '-q1" value="meh">😐 ちょっと遅れ気味</label>' +
-              '<label class="radio-option"><input type="radio" name="' + uid + '-q1" value="sos">🆘 困ってる・相談したい</label>' +
+              '<label class="radio-option"><input type="radio" name="' + uid + '-q1" value="happy"><span class="sq sq-happy"></span>順調でした</label>' +
+              '<label class="radio-option"><input type="radio" name="' + uid + '-q1" value="meh"><span class="sq sq-meh"></span>ちょっと遅れ気味</label>' +
+              '<label class="radio-option"><input type="radio" name="' + uid + '-q1" value="sos"><span class="sq sq-sos"></span>困ってる・相談したい</label>' +
             '</div>' +
 
             '<div class="q-block">' +
@@ -241,7 +241,7 @@
               '<div class="reveal-inner">' +
                 '<div class="q-block">' +
                   '<div class="q-label">Q4. どんなことで困っていますか？</div>' +
-                  '<div class="note-box">🔒 ここは社長だけが見ます。リーダーには表示されません。\nまとまっていなくて大丈夫です。愚痴でも構いません。\nすぐに解決できるとは限りません。それでも、知っているだけで\n打てる手があります。気楽に書いてください。</div>' +
+                  '<div class="note-box">ここは社長だけが見ます。リーダーには表示されません。\nまとまっていなくて大丈夫です。愚痴でも構いません。\nすぐに解決できるとは限りません。それでも、知っているだけで\n打てる手があります。気楽に書いてください。</div>' +
                   '<textarea rows="4" class="q4-textarea"></textarea>' +
                 '</div>' +
                 '<div class="q-block">' +
@@ -259,7 +259,7 @@
 
           /* 画面C（通常・ランダム） */
           '<div class="slack-screen screen-c">' +
-            '<div class="corner-note">← 🆘 を選ぶと、この文面に変わります</div>' +
+            '<div class="corner-note">← <span class="sq sq-sos"></span>「困ってる・相談したい」を選ぶと、この文面に変わります</div>' +
             '<div class="slack-complete">' +
               '<div class="complete-main">受け取りました。</div>' +
               '<div class="complete-sub complete-random"></div>' +
@@ -271,9 +271,9 @@
             '</div>' +
           '</div>' +
 
-          /* 画面D（🆘・固定） */
+          /* 画面D（困ってる・相談したい・固定） */
           '<div class="slack-screen screen-d">' +
-            '<div class="corner-note">← 🆘 を選ぶと、この文面に変わります</div>' +
+            '<div class="corner-note">← <span class="sq sq-sos"></span>「困ってる・相談したい」を選ぶと、この文面に変わります</div>' +
             '<div class="slack-complete">' +
               '<div class="complete-main">受け取りました。\n近いうちに社長から声をかけます。</div>' +
               '<div class="complete-sub">ひとりで抱えないでくれて、ありがとう。</div>' +
@@ -307,7 +307,7 @@
       });
     });
 
-    /* ---- Q1 の分岐（🆘 で Q4/Q5 が出現） ---- */
+    /* ---- Q1 の分岐（困ってる・相談したい で Q4/Q5 が出現） ---- */
     var revealBlock = screens.b.querySelector(".reveal-block");
     var q1Radios = screens.b.querySelectorAll('input[name="' + uid + '-q1"]');
     q1Radios.forEach(function (radio) {
@@ -325,7 +325,7 @@
       var chip = document.createElement("span");
       chip.className = "file-chip";
       var label = document.createElement("span");
-      label.textContent = "📎 " + name;
+      label.textContent = name;
       var removeBtn = document.createElement("button");
       removeBtn.type = "button";
       removeBtn.textContent = "✕";

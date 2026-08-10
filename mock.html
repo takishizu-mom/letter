@@ -43,16 +43,16 @@
 
     <div class="table-heading">
       <h3>週次レポートDB</h3>
-      <span class="badge-view open">👥 社長＋部門リーダーが閲覧</span>
+      <span class="badge-view open">社長＋部門リーダーが閲覧</span>
     </div>
 
     <div class="table-block">
       <div class="filter-row">
         <button type="button" class="filter-btn active" data-filter="all">すべて</button>
-        <button type="button" class="filter-btn" data-filter="happy">😊 順調</button>
-        <button type="button" class="filter-btn" data-filter="meh">😐 遅れ気味</button>
-        <button type="button" class="filter-btn" data-filter="sos">🆘 要フォロー</button>
-        <button type="button" class="filter-btn" data-filter="nofile">📎 成果物なし</button>
+        <button type="button" class="filter-btn" data-filter="happy"><span class="sq sq-happy"></span>順調</button>
+        <button type="button" class="filter-btn" data-filter="meh"><span class="sq sq-meh"></span>遅れ気味</button>
+        <button type="button" class="filter-btn" data-filter="sos"><span class="sq sq-sos"></span>要フォロー</button>
+        <button type="button" class="filter-btn" data-filter="nofile">成果物なし</button>
       </div>
 
       <div class="table-scroll">
@@ -65,54 +65,54 @@
           <tbody>
             <tr data-status="happy" data-nofile="false">
               <td>山田 太郎</td><td>IT広告</td><td>8/14週</td>
-              <td><span class="chip-status chip-happy">😊 順調</span></td>
-              <td>📎2件</td><td>来週の入稿分も準備できました</td><td></td>
+              <td><span class="chip-status chip-happy">順調</span></td>
+              <td>2件</td><td>来週の入稿分も準備できました</td><td></td>
             </tr>
             <tr data-status="happy" data-nofile="false">
               <td>佐藤 花子</td><td>飲食</td><td>8/14週</td>
-              <td><span class="chip-status chip-happy">😊 順調</span></td>
-              <td>📎1件</td><td>新メニューの写真撮影が完了しました</td><td></td>
+              <td><span class="chip-status chip-happy">順調</span></td>
+              <td>1件</td><td>新メニューの写真撮影が完了しました</td><td></td>
             </tr>
             <tr data-status="meh" data-nofile="false">
               <td>高橋 健</td><td>IT広告</td><td>8/14週</td>
-              <td><span class="chip-status chip-meh">😐 遅れ気味</span></td>
-              <td>📎1件</td><td>予定より少し遅れています</td><td></td>
+              <td><span class="chip-status chip-meh">遅れ気味</span></td>
+              <td>1件</td><td>予定より少し遅れています</td><td></td>
             </tr>
             <tr data-status="happy" data-nofile="true">
               <td>田中 美咲</td><td>飲食</td><td>8/14週</td>
-              <td><span class="chip-status chip-happy">😊 順調</span></td>
+              <td><span class="chip-status chip-happy">順調</span></td>
               <td>なし</td><td>特にありません</td><td></td>
             </tr>
             <tr data-status="sos" data-nofile="true">
               <td>伊藤 修</td><td>IT広告</td><td>8/14週</td>
-              <td><span class="chip-status chip-sos">🆘 要フォロー</span></td>
-              <td>なし</td><td>───</td><td>✅</td>
+              <td><span class="chip-status chip-sos">要フォロー</span></td>
+              <td>なし</td><td>───</td><td>✓</td>
             </tr>
             <tr data-status="meh" data-nofile="true">
               <td>渡辺 直樹</td><td>飲食</td><td>8/14週</td>
-              <td><span class="chip-status chip-meh">😐 遅れ気味</span></td>
+              <td><span class="chip-status chip-meh">遅れ気味</span></td>
               <td>なし</td><td>シフト調整に追われました</td><td></td>
             </tr>
             <tr data-status="happy" data-nofile="false">
               <td>小林 彩</td><td>IT広告</td><td>8/14週</td>
-              <td><span class="chip-status chip-happy">😊 順調</span></td>
-              <td>📎3件</td><td>クリエイティブ差し替え完了</td><td></td>
+              <td><span class="chip-status chip-happy">順調</span></td>
+              <td>3件</td><td>クリエイティブ差し替え完了</td><td></td>
             </tr>
             <tr data-status="sos" data-nofile="true">
               <td>中村 悠</td><td>飲食</td><td>8/14週</td>
-              <td><span class="chip-status chip-sos">🆘 要フォロー</span></td>
-              <td>なし</td><td>───</td><td>✅</td>
+              <td><span class="chip-status chip-sos">要フォロー</span></td>
+              <td>なし</td><td>───</td><td>✓</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <p class="between-note">🆘 を選んだ人の詳細は、上の表には出ずにこちらへ振り分けられます ↓</p>
+    <p class="between-note"><span class="sq sq-sos"></span>「困ってる・相談したい」を選んだ人の詳細は、上の表には出ずにこちらへ振り分けられます ↓</p>
 
     <div class="table-heading">
       <h3>SOS相談DB</h3>
-      <span class="badge-view locked">🔒 社長のみ</span>
+      <span class="badge-view locked">社長のみ</span>
     </div>
 
     <div class="table-scroll">
@@ -141,11 +141,11 @@
 
   <!-- タブ③：週次サマリー -->
   <div class="tab-panel" id="tab-summary">
-    <div class="summary-card">📊 今週の全社サマリー（8/14週）
+    <div class="summary-card">今週の全社サマリー（8/14週）
 
 提出 <span class="num-lg">17/19</span>名（未提出：2名）
 
-😊 順調 12名 ／ 😐 遅れ気味 3名 ／ 🆘 要フォロー 2名
+<span class="sq sq-happy"></span>順調 12名 ／ <span class="sq sq-meh"></span>遅れ気味 3名 ／ <span class="sq sq-sos"></span>要フォロー 2名
 
 ━━━ 今週すぐ動いたほうがいいこと ━━━
 ・（IT広告）新規案件の入稿が2週連続で遅延。人手が足りていない可能性

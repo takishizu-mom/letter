@@ -120,9 +120,9 @@
           <tr><th>名前</th><th>部門</th><th>調子</th><th>成果物</th></tr>
         </thead>
         <tbody>
-          <tr><td>山田 太郎</td><td>IT広告</td><td>😊</td><td>📎2件</td></tr>
-          <tr><td>佐藤 花子</td><td>飲食</td><td>😐</td><td>📎1件</td></tr>
-          <tr><td>鈴木 一郎</td><td>IT広告</td><td>🆘</td><td>───</td></tr>
+          <tr><td>山田 太郎</td><td>IT広告</td><td><span class="sq sq-happy"></span></td><td>2件</td></tr>
+          <tr><td>佐藤 花子</td><td>飲食</td><td><span class="sq sq-meh"></span></td><td>1件</td></tr>
+          <tr><td>鈴木 一郎</td><td>IT広告</td><td><span class="sq sq-sos"></span></td><td>───</td></tr>
         </tbody>
       </table>
     </section>
@@ -169,7 +169,7 @@
       <div class="reason-cards">
         <div class="reason-card">
           <h3>① SOSを責めない</h3>
-          <p>🆘 を選んだ人を問い詰めません。早く知れたことを歓迎します。</p>
+          <p><span class="sq sq-sos"></span>「困ってる・相談したい」を選んだ人を問い詰めません。早く知れたことを歓迎します。</p>
         </div>
         <div class="reason-card">
           <h3>② 査定に使わない</h3>
@@ -193,12 +193,12 @@
         <li>④ 月曜の朝、Claude Code に合言葉を打つだけで集計・サマリー作成</li>
       </ul>
       <p>具体的な手順とコピペ用プロンプトは、次のページにまとめています。</p>
-      <p><a class="btn" href="build.html">🔧 実装フローを見る</a></p>
+      <p><a class="btn" href="build.html">実装フローを見る</a></p>
     </section>
 
     <!-- 13. 社長のお道具箱への組み込み提案 -->
     <section class="slide">
-      <h2>💼 「社長のお道具箱」に入れてもいいかもしれません</h2>
+      <h2>「社長のお道具箱」に入れてもいいかもしれません</h2>
       <p>この仕組みは単体でも成立しますが、
         「社長のお道具箱」の道具のひとつとして載せると相性がいいと思いました。</p>
 
@@ -229,10 +229,10 @@
 この3点をセットにして、社長が自社のSlackに入れるだけ、という形。</div>
 
       <div class="warn-box">
-        <strong>⚠️ 注意</strong>
+        <strong>注意</strong>
         <p>ひとつだけ、外せない設計があります。
 
-🆘 の詳細を「社長だけ」に届ける権限設計は、絶対に間違えないでください。
+<span class="sq sq-sos"></span>「困ってる・相談したい」の詳細を「社長だけ」に届ける権限設計は、絶対に間違えないでください。
 一度でもリーダーに漏れると、その会社では二度と本音が集まらなくなります。
 機能として提供するなら、ここは設定ミスが起きない作り
 （初期値で社長のみ／変更時に警告を出す）にしておくのが安全です。</p>

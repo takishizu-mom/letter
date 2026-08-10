@@ -44,11 +44,11 @@
     <div class="flow-branch">
       <div class="flow-col">
         <div class="flow-arrow">↓</div>
-        <div class="flow-box branch-calm">😊😐 そのまま送信</div>
+        <div class="flow-box branch-calm"><span class="sq sq-happy"></span><span class="sq sq-meh"></span>そのまま送信</div>
       </div>
       <div class="flow-col">
         <div class="flow-arrow">↓</div>
-        <div class="flow-box branch-sos">🆘 詳細欄が追加で出る</div>
+        <div class="flow-box branch-sos"><span class="sq sq-sos"></span>詳細欄が追加で出る</div>
       </div>
     </div>
 
@@ -87,7 +87,7 @@
   <div class="copy-block">
     <div class="copy-block-header">
       <span>ブロック1：準備（Slack と Notion をつなぐ）</span>
-      <button type="button" class="copy-btn" data-target="block1">📋 コピー</button>
+      <button type="button" class="copy-btn" data-target="block1">コピー</button>
     </div>
     <pre class="copy-text" id="block1">私の会社に「レター」という週次報告の仕組みを作りたい。まず準備を手伝ってほしい。
 
@@ -108,7 +108,7 @@
   <div class="copy-block">
     <div class="copy-block-header">
       <span>ブロック2：Notion 側を作る</span>
-      <button type="button" class="copy-btn" data-target="block2">📋 コピー</button>
+      <button type="button" class="copy-btn" data-target="block2">コピー</button>
     </div>
     <pre class="copy-text" id="block2">Notion に、レター用のデータベースを2つ作ってください。
 
@@ -116,7 +116,7 @@
 - 名前（タイトル）
 - 部門（セレクト：IT広告 / 飲食）
 - 週（日付）
-- 調子（セレクト：😊順調 / 😐遅れ気味 / 🆘要フォロー）
+- 調子（セレクト：順調 / 遅れ気味 / 要フォロー）
 - 成果物（ファイル&メディア）
 - 成果物リンク（URL）
 - ひとこと（テキスト）
@@ -133,7 +133,7 @@
 
 【重要】
 DB2 は絶対にリーダーへ共有しないでください。
-DB1 には🆘の詳細を一切書かず、「要フォロー」にチェックを入れるだけにしてください。
+DB1 には要フォローの詳細を一切書かず、「要フォロー」にチェックを入れるだけにしてください。
 本音を集めるための設計なので、ここが崩れると仕組み全体が意味を失います。
 
 作り終わったら、2つの DB の URL を教えてください。</pre>
@@ -143,7 +143,7 @@ DB1 には🆘の詳細を一切書かず、「要フォロー」にチェック
   <div class="copy-block">
     <div class="copy-block-header">
       <span>ブロック3：毎週の集計（月曜の朝に打つ合言葉）</span>
-      <button type="button" class="copy-btn" data-target="block3">📋 コピー</button>
+      <button type="button" class="copy-btn" data-target="block3">コピー</button>
     </div>
     <pre class="copy-text" id="block3">レターの集計をお願いします。
 
@@ -151,7 +151,7 @@ DB1 には🆘の詳細を一切書かず、「要フォロー」にチェック
 2. 各回答を Notion の「週次レポート」DB に1行ずつ追加する
    - 添付ファイルがあれば、ファイル本体を Notion にアップロードして紐づける
      （Notion の File Upload API を使う。20MBまでは1回で送れる）
-   - 調子が 🆘 の人は、詳細を「週次レポート」には書かず
+   - 調子が 要フォロー の人は、詳細を「週次レポート」には書かず
      「SOS相談」DB へ別途登録し、週次レポート側は「要フォロー」にチェックだけ入れる
 3. 未提出者を洗い出す
 4. 最後に、社長向けの週次サマリーを1枚にまとめて表示する
@@ -166,7 +166,7 @@ DB1 には🆘の詳細を一切書かず、「要フォロー」にチェック
 
 【注意】
 - 社員を評価・採点しない。事実と兆候だけを書く
-- 🆘 の詳細を week レポート側やサマリーの共有部分に漏らさない</pre>
+- 要フォロー の詳細を week レポート側やサマリーの共有部分に漏らさない</pre>
   </div>
 
   <!-- 5-3. Slack ワークフローの設定手順 -->
@@ -177,7 +177,7 @@ DB1 には🆘の詳細を一切書かず、「要フォロー」にチェック
     <li>開始方法で「スケジュールされた日時」を選び、毎週金曜17:00・繰り返しを「毎週」に設定</li>
     <li>ステップ追加で「メッセージを送信する」を選び、宛先を全社員のチャンネルにして本文を貼る</li>
     <li>「フォームで情報を収集する」ステップを追加し、Q1〜Q3 を作る（Q2 はファイル添付の項目を選ぶ）</li>
-    <li>「ユーティリティ」→「分岐を追加」で <code>Q1 = 🆘困ってる・相談したい</code> の条件を作る</li>
+    <li>「ユーティリティ」→「分岐を追加」で <code>Q1 = 困ってる・相談したい</code> の条件を作る</li>
     <li>その分岐の中に、もう一つフォーム（Q4・Q5）を追加する</li>
     <li>回答の送り先を、非公開チャンネル <code>#レター</code> に設定する</li>
     <li>右上の「公開する」をクリックして完了</li>
@@ -186,8 +186,8 @@ DB1 には🆘の詳細を一切書かず、「要フォロー」にチェック
     「ワークフロー」「分岐」で画面内を検索してください。</p>
 
   <!-- 5-4. お礼メッセージのランダム表示について -->
-  <div class="warn-box" style="background:var(--warn-bg); border-color:var(--warn-border); color:var(--warn-text); margin-top:32px;">
-    <strong>⚠️ 送信後のお礼メッセージについて</strong>
+  <div class="warn-box" style="margin-top:32px;">
+    <strong>送信後のお礼メッセージについて</strong>
     <p>モックでは毎回ちがう文面が出ますが、Slack のワークフロービルダーだけで
 これを実現できるかは未確認です。ワークフロービルダーは「条件で分ける」機能
 （分岐）はありますが、「ランダムに選ぶ」機能は見当たりません。
@@ -195,7 +195,7 @@ DB1 には🆘の詳細を一切書かず、「要フォロー」にチェック
 【現実的なやり方は2つ】
 
 A. Slack 側は固定文にする（いちばん簡単）
-   「受け取りました。今週もおつかれさまでした 🌿」で固定。
+   「受け取りました。今週もおつかれさまでした」で固定。
    文面は月に一度など、手で書き換えれば十分です。
 
 B. 月曜の集計時に、Claude Code からお礼を送る（おすすめ）
