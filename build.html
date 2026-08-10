@@ -29,55 +29,117 @@
 
   <!-- 5-1. フローチャート -->
   <div class="flow-chart">
-    <div class="flow-box">金曜 17:00</div>
-    <div class="flow-arrow">↓</div>
 
-    <div class="flow-box">Slack が全社員に自動送信</div>
-    <div class="flow-note">← ワークフロービルダーのスケジュール起動</div>
-    <div class="flow-arrow">↓</div>
+    <div class="flow-step flow-step-slack">
+      <div class="flow-step-head">
+        <span class="flow-step-num">01</span>
+        <span class="flow-tag">自動</span>
+      </div>
+      <div class="flow-box">金曜 17:00</div>
+    </div>
+    <div class="flow-arrow"></div>
 
-    <div class="flow-box">社員がフォームに回答（30秒）</div>
-    <div class="flow-arrow">↓</div>
+    <div class="flow-step flow-step-slack">
+      <div class="flow-step-head">
+        <span class="flow-step-num">02</span>
+        <span class="flow-tag">自動</span>
+      </div>
+      <div class="flow-box">Slack が全社員に自動送信</div>
+      <div class="flow-note">← ワークフロービルダーのスケジュール起動</div>
+    </div>
+    <div class="flow-arrow"></div>
+
+    <div class="flow-step flow-step-slack">
+      <div class="flow-step-head">
+        <span class="flow-step-num">03</span>
+        <span class="flow-tag flow-tag-staff">社員</span>
+      </div>
+      <div class="flow-box">社員がフォームに回答（30秒）</div>
+    </div>
+    <div class="flow-arrow"></div>
 
     <div class="flow-box plain">┌── Q1 の答えで分岐 ──┐</div>
 
     <div class="flow-branch">
-      <div class="flow-col">
-        <div class="flow-arrow">↓</div>
+      <div class="flow-col flow-col-calm">
+        <div class="flow-arrow"></div>
+        <div class="flow-step-head">
+          <span class="flow-step-num">04</span>
+          <span class="flow-tag flow-tag-staff">社員</span>
+        </div>
         <div class="flow-box branch-calm"><span class="sq sq-happy"></span><span class="sq sq-meh"></span>そのまま送信</div>
       </div>
-      <div class="flow-col">
-        <div class="flow-arrow">↓</div>
+      <div class="flow-col flow-col-sos">
+        <div class="flow-arrow"></div>
+        <div class="flow-step-head">
+          <span class="flow-step-num">05</span>
+          <span class="flow-tag flow-tag-staff">社員</span>
+        </div>
         <div class="flow-box branch-sos"><span class="sq sq-sos"></span>詳細欄が追加で出る</div>
       </div>
     </div>
 
-    <div class="flow-arrow">↓</div>
-    <div class="flow-box">非公開チャンネルに回答が溜まる</div>
-    <div class="flow-arrow">↓</div>
+    <div class="flow-merge"><span class="flow-merge-tri"></span></div>
 
-    <div class="flow-box">月曜朝：社長が Claude Code に合言葉を打つ</div>
-    <div class="flow-arrow">↓</div>
+    <div class="flow-step flow-step-slack">
+      <div class="flow-step-head">
+        <span class="flow-step-num">06</span>
+        <span class="flow-tag">自動</span>
+      </div>
+      <div class="flow-box">非公開チャンネルに回答が溜まる</div>
+    </div>
+    <div class="flow-arrow"></div>
 
-    <div class="flow-box">Claude Code が Slack を読む</div>
-    <div class="flow-note">← Slack 公式 MCP（無料・要管理者承認）</div>
-    <div class="flow-arrow">↓</div>
+    <div class="flow-step flow-step-claude">
+      <div class="flow-step-head">
+        <span class="flow-step-num">07</span>
+        <span class="flow-tag flow-tag-boss">社長</span>
+      </div>
+      <div class="flow-box">月曜朝：社長が Claude Code に合言葉を打つ</div>
+    </div>
+    <div class="flow-arrow"></div>
+
+    <div class="flow-step flow-step-claude">
+      <div class="flow-step-head">
+        <span class="flow-step-num">08</span>
+        <span class="flow-tag">自動</span>
+      </div>
+      <div class="flow-box">Claude Code が Slack を読む</div>
+      <div class="flow-note">← Slack 公式 MCP（無料・要管理者承認）</div>
+    </div>
+    <div class="flow-arrow"></div>
 
     <div class="flow-box plain">┌── 振り分け ──┐</div>
 
     <div class="flow-branch">
-      <div class="flow-col">
-        <div class="flow-arrow">↓</div>
+      <div class="flow-col flow-step-claude">
+        <div class="flow-arrow"></div>
+        <div class="flow-step-head">
+          <span class="flow-step-num">09</span>
+          <span class="flow-tag">自動</span>
+        </div>
         <div class="flow-box">週次レポートDB<br>社長＋リーダー</div>
       </div>
-      <div class="flow-col">
-        <div class="flow-arrow">↓</div>
+      <div class="flow-col flow-step-claude">
+        <div class="flow-arrow"></div>
+        <div class="flow-step-head">
+          <span class="flow-step-num">10</span>
+          <span class="flow-tag">自動</span>
+        </div>
         <div class="flow-box">SOS相談DB<br>社長のみ</div>
       </div>
     </div>
 
-    <div class="flow-arrow">↓</div>
-    <div class="flow-box">週次サマリー1枚が出力される</div>
+    <div class="flow-merge"><span class="flow-merge-tri"></span></div>
+
+    <div class="flow-step flow-step-claude">
+      <div class="flow-step-head">
+        <span class="flow-step-num">11</span>
+        <span class="flow-tag">自動</span>
+      </div>
+      <div class="flow-box">週次サマリー1枚が出力される</div>
+    </div>
+
   </div>
 
   <!-- 5-2. コピペ用プロンプト -->
@@ -159,7 +221,11 @@ DB1 には要フォローの詳細を一切書かず、「要フォロー」に�
    - 今週すぐ動いたほうがいいこと
    - 良かったこと
    - 気になる兆候（例：3週連続で成果物の添付がない人）
-5. 最後に、回答してくれた人ひとりずつへのお礼DMの文案を作ってください。
+5. 集計後、統計を Notion の「経営分析」ページに追記してください
+   - 提出率／調子の内訳／SOS件数と対応状況
+   - 前週までの推移と比べて、気になる兆候があれば1〜3行で書く
+   - このページは社長と幹部のみ共有。共有範囲を変えないこと
+6. 最後に、回答してくれた人ひとりずつへのお礼DMの文案を作ってください。
    - その人の回答内容を踏まえた、短い労いの言葉にする
    - 評価・採点をしない。ほめ言葉の押し売りもしない
    - 送信はせず、まず私に文案を見せてください。私がOKを出してから送ってください

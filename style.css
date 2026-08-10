@@ -274,6 +274,7 @@ strong{ color:var(--highlight); }
 .entry-card:nth-child(2)::before{ background:var(--highlight); }
 .entry-card:nth-child(3)::before{ background:var(--yellow); }
 .entry-card:nth-child(4)::before{ background:var(--accent); }
+.entry-card:nth-child(5)::before{ background:var(--accent-dark); }
 .entry-card:nth-child(2){ border:2px solid var(--highlight); }
 
 .entry-card-meta{
@@ -691,8 +692,48 @@ textarea.field-error, input.field-error{ border-color:var(--danger-text); }
   padding:10px 12px;
   font-size:12.5px;
   color:var(--accent-dark);
-  white-space:pre-line;
   margin-bottom:10px;
+}
+.note-box-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.note-box-title{
+  font-weight:700;
+}
+.note-box-toggle{
+  flex:0 0 auto;
+  width:24px;
+  height:24px;
+  border-radius:4px;
+  border:1.5px solid var(--accent);
+  background:#fff;
+  color:var(--accent-dark);
+  font-size:15px;
+  font-weight:700;
+  line-height:1;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  font-family:inherit;
+}
+.note-box-toggle:hover{ background:var(--accent-light); }
+.note-box-body{
+  white-space:pre-line;
+  overflow:hidden;
+  max-height:200px;
+  opacity:1;
+  margin-top:8px;
+  transition:max-height .35s ease, opacity .3s ease, margin-top .35s ease;
+}
+.note-box-body.collapsed{
+  max-height:0;
+  opacity:0;
+  margin-top:0;
 }
 
 .slack-complete{
@@ -851,7 +892,7 @@ textarea.field-error, input.field-error{ border-color:var(--danger-text); }
 }
 
 /* ==========================================================================
-   build.html ─ フローチャート
+   build.html ─ フローチャート（インフォグラフィック風）
    ========================================================================== */
 .flow-chart{
   display:flex;
@@ -860,48 +901,148 @@ textarea.field-error, input.field-error{ border-color:var(--danger-text); }
   gap:0;
   margin:24px 0 36px;
 }
+.flow-step{
+  width:100%;
+  max-width:320px;
+}
+.flow-step-head{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  margin-bottom:6px;
+}
+.flow-step-num{
+  font-weight:800;
+  font-size:13px;
+  color:var(--gray);
+  font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",system-ui,sans-serif;
+}
+.flow-tag{
+  font-size:11px;
+  font-weight:700;
+  padding:2px 9px;
+  border-radius:4px;
+  background:var(--gray-light);
+  color:var(--gray);
+}
+.flow-tag-staff{ background:var(--accent-light); color:var(--accent-dark); }
+.flow-tag-boss{ background:var(--highlight-light); color:#c23b3b; }
+
 .flow-box{
   border:none;
   background:#fff;
   color:var(--accent-dark);
   border-radius:var(--radius);
+  border-left:3px solid var(--border);
+  border-bottom:3px solid rgba(18,63,71,.08);
   padding:12px 18px;
   font-weight:700;
   font-size:13.5px;
   text-align:center;
-  max-width:320px;
+  width:100%;
   box-shadow:var(--shadow-card);
 }
 .flow-box.plain{
   color:var(--text);
   font-weight:400;
+  border-left-color:transparent;
+  border-bottom-color:transparent;
+  box-shadow:none;
+  background:transparent;
+  max-width:320px;
 }
-.flow-box.branch-calm{ border-left:4px solid var(--teal); }
-.flow-box.branch-sos{ border-left:4px solid var(--highlight); }
-.flow-arrow{
-  font-size:20px;
-  color:var(--accent);
-  padding:4px 0;
-}
+.flow-box.branch-calm{ border-left-color:var(--yellow); }
+.flow-box.branch-sos{ border-left-color:var(--highlight); }
+
+/* 工程の色分け：Slack工程＝ティール／Claude・Notion工程＝濃紺緑 */
+.flow-step-slack .flow-step-num{ color:var(--teal); }
+.flow-step-slack .flow-box{ border-left-color:var(--teal); }
+.flow-step-claude .flow-step-num{ color:var(--accent-dark); }
+.flow-step-claude .flow-box{ border-left-color:var(--accent-dark); }
+
+/* 分岐の色分け：コーラル（🆘側）／黄（通常側） */
+.flow-col-calm .flow-step-num{ color:#a4890a; }
+.flow-col-sos .flow-step-num{ color:var(--highlight); }
+
 .flow-note{
   font-size:11.5px;
   color:var(--gray);
-  margin-top:-6px;
-  margin-bottom:4px;
+  margin-top:6px;
+  text-align:center;
 }
+
+/* 矢印：CSSで描く縦線＋三角の接続線 */
+.flow-arrow{
+  width:2px;
+  height:22px;
+  background:var(--accent);
+  margin:6px auto;
+  position:relative;
+}
+.flow-arrow::after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-1px;
+  transform:translateX(-50%);
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:7px solid var(--accent);
+}
+
 .flow-branch{
   display:flex;
-  gap:24px;
+  gap:20px;
   justify-content:center;
-  flex-wrap:wrap;
+  flex-wrap:nowrap;
   width:100%;
+  max-width:400px;
 }
 .flow-branch .flow-col{
   display:flex;
   flex-direction:column;
   align-items:center;
-  flex:1 1 200px;
+  flex:1 1 0;
   max-width:280px;
+  min-width:0;
+}
+.flow-branch .flow-col .flow-arrow{ margin-top:0; }
+
+/* 分岐→合流の接続線 */
+.flow-merge{
+  position:relative;
+  width:100%;
+  max-width:400px;
+  height:26px;
+}
+.flow-merge::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:25%;
+  right:25%;
+  height:2px;
+  background:var(--accent);
+}
+.flow-merge::after{
+  content:"";
+  position:absolute;
+  top:0;
+  left:50%;
+  width:2px;
+  height:26px;
+  background:var(--accent);
+  transform:translateX(-50%);
+}
+.flow-merge-tri{
+  position:absolute;
+  left:50%;
+  bottom:-1px;
+  transform:translateX(-50%);
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:7px solid var(--accent);
 }
 
 .copy-block{
@@ -1060,12 +1201,140 @@ section.block{ margin:44px 0; }
 }
 
 /* ==========================================================================
+   analytics.html 固有
+   ========================================================================== */
+.analytics-card{
+  background:#fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-card);
+  padding:22px 18px;
+  margin-bottom:32px;
+  overflow-x:auto;
+}
+.chart-legend{
+  display:flex;
+  gap:16px;
+  flex-wrap:wrap;
+  font-size:13px;
+  color:var(--text);
+  margin-bottom:16px;
+}
+.chart-legend .sq{ margin-right:6px; }
+
+.chart-bars, .chart-stacks{
+  display:flex;
+  align-items:flex-end;
+  gap:8px;
+  height:150px;
+}
+.chart-bar-item, .chart-stack-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  flex:1 1 0;
+  min-width:0;
+  height:100%;
+  justify-content:flex-end;
+}
+.chart-bar-label{
+  font-size:11.5px;
+  font-weight:700;
+  color:var(--accent-dark);
+  margin-bottom:4px;
+  white-space:nowrap;
+}
+.chart-bar-track, .chart-stack-track{
+  width:100%;
+  max-width:32px;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  background:var(--gray-light);
+  border-radius:4px;
+  overflow:hidden;
+}
+.chart-bar-fill{
+  width:100%;
+  background:var(--teal);
+  border-radius:4px 4px 0 0;
+}
+.chart-stack-seg.seg-happy{ background:var(--teal); }
+.chart-stack-seg.seg-meh{ background:var(--yellow); }
+.chart-stack-seg.seg-sos{ background:var(--highlight); }
+.chart-stack-seg:first-child{ border-radius:4px 4px 0 0; }
+.chart-bar-week, .chart-stack-week{
+  font-size:10.5px;
+  color:var(--gray);
+  margin-top:6px;
+  white-space:nowrap;
+}
+
+.stat-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(140px,1fr));
+  gap:14px;
+  margin-bottom:32px;
+}
+.stat-card{
+  background:#fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-card);
+  padding:20px;
+  text-align:center;
+}
+.stat-card-num{
+  font-size:32px;
+  font-weight:800;
+  color:var(--accent-dark);
+}
+.stat-card-label{
+  font-size:13px;
+  color:var(--gray);
+  margin-top:4px;
+}
+
+.signal-list{
+  background:#fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-card);
+  padding:18px 20px 18px 34px;
+  font-size:14px;
+  line-height:1.9;
+  margin:0 0 32px;
+}
+.signal-list li{ margin-bottom:4px; }
+
+.key-box{
+  background:var(--accent-light);
+  border:1.5px solid var(--accent-dark);
+  border-radius:var(--radius);
+  padding:20px 22px;
+  margin-top:36px;
+}
+.key-box strong{
+  display:block;
+  margin-bottom:8px;
+  color:var(--accent-dark);
+  font-size:15px;
+}
+.key-box p{
+  margin:0;
+  font-size:13.5px;
+  white-space:pre-line;
+  color:var(--text);
+}
+
+/* ==========================================================================
    レスポンシブ
    ========================================================================== */
 @media (max-width:600px){
   .container{ padding:12px 14px 48px; }
   .slide{ padding:26px 18px; }
-  .flow-branch{ flex-direction:column; align-items:center; }
+  .flow-branch{ gap:10px; }
+  .flow-branch .flow-box{ font-size:12px; padding:10px 8px; }
+  .flow-step-num{ font-size:11px; }
+  .flow-tag{ font-size:10px; padding:2px 7px; }
 
   .top-hero{ display:block; padding:24px 2px 14px; }
   .top-hero h1{ margin-top:0; font-size:30px; }

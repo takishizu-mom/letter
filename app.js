@@ -272,7 +272,13 @@
               '<div class="reveal-inner">' +
                 '<div class="q-block">' +
                   '<div class="q-label">Q4. どんなことで困っていますか？</div>' +
-                  '<div class="note-box">ここは社長だけが見ます。リーダーには表示されません。\nまとまっていなくて大丈夫です。愚痴でも構いません。\nすぐに解決できるとは限りません。それでも、知っているだけで\n打てる手があります。気楽に書いてください。</div>' +
+                  '<div class="note-box">' +
+                    '<div class="note-box-head">' +
+                      '<span class="note-box-title">ご記入前に（大事なことを書いています）</span>' +
+                      '<button type="button" class="note-box-toggle" aria-expanded="true" aria-label="注意書きの開閉">−</button>' +
+                    '</div>' +
+                    '<div class="note-box-body">ここは社長だけが見ます。リーダーには表示されません。\nまとまっていなくて大丈夫です。愚痴でも構いません。\nすぐに解決できるとは限りません。それでも、知っているだけで\n打てる手があります。気楽に書いてください。</div>' +
+                  '</div>' +
                   '<textarea rows="4" class="q4-textarea"></textarea>' +
                 '</div>' +
                 '<div class="q-block">' +
@@ -306,7 +312,7 @@
           '<div class="slack-screen screen-d">' +
             '<div class="corner-note">← <span class="sq sq-sos"></span>「困ってる・相談したい」を選ぶと、この文面に変わります</div>' +
             '<div class="slack-complete">' +
-              '<div class="complete-main">受け取りました。\n近いうちに社長から声をかけます。</div>' +
+              '<div class="complete-main">受け取りました。\n社長がちゃんと読みます。すぐに声をかけられないこともありますが、必ず読みます。安心してください。</div>' +
               '<div class="complete-sub">ひとりで抱えないでくれて、ありがとう。</div>' +
               '<div class="complete-actions">' +
                 '<button type="button" class="btn-secondary btn" data-go="a">もう一度最初から試す</button>' +
@@ -346,6 +352,22 @@
         revealBlock.classList.toggle("show", radio.value === "sos" && radio.checked);
       });
     });
+
+    /* ---- Q4 上の注意書き：＋／−で畳める ---- */
+    var NOTE_TITLE_TEXT = "ご記入前に（大事なことを書いています）";
+    var noteToggle = screens.b.querySelector(".note-box-toggle");
+    var noteTitle = screens.b.querySelector(".note-box-title");
+    var noteBody = screens.b.querySelector(".note-box-body");
+    if (noteToggle && noteTitle && noteBody) {
+      noteToggle.addEventListener("click", function () {
+        var expanded = noteToggle.getAttribute("aria-expanded") === "true";
+        var nextExpanded = !expanded;
+        noteToggle.setAttribute("aria-expanded", String(nextExpanded));
+        noteToggle.textContent = nextExpanded ? "−" : "＋";
+        noteBody.classList.toggle("collapsed", !nextExpanded);
+        noteTitle.textContent = nextExpanded ? NOTE_TITLE_TEXT : "＋ " + NOTE_TITLE_TEXT;
+      });
+    }
 
     /* ---- Q2：ドラッグ＆ドロップ／クリック選択 ---- */
     var dropzone = screens.b.querySelector(".dropzone");
@@ -448,6 +470,12 @@
       screens.b.querySelectorAll('input[type="url"]').forEach(function (u) { u.value = ""; });
       fileChips.innerHTML = "";
       revealBlock.classList.remove("show");
+      if (noteToggle && noteTitle && noteBody) {
+        noteToggle.setAttribute("aria-expanded", "true");
+        noteToggle.textContent = "−";
+        noteBody.classList.remove("collapsed");
+        noteTitle.textContent = NOTE_TITLE_TEXT;
+      }
     }
 
     show("a");

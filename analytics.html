@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>経営分析（デモ） ── レター</title>
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="レター">
+<meta property="og:title" content="レター｜経営分析（デモ）">
+<meta property="og:description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<meta property="og:image" content="https://takishizu-mom.github.io/letter/ogp.png">
+<meta property="og:url" content="https://takishizu-mom.github.io/letter/analytics.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="description" content="週1回・30秒。Slackから届く報告のしくみ。実際に触って試せる提案資料です。">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="index.html">レター</a>
+  <a class="back-link" href="index.html">← トップへ戻る</a>
+</header>
+
+<div class="container">
+
+  <h1 style="margin-bottom:4px;">経営分析（デモ）</h1>
+  <p style="color:var(--gray); margin-top:0;">導入すると、こんな分析が自動で蓄積されます。ここに表示しているのはサンプルデータです。</p>
+
+  <h2>提出率の推移</h2>
+  <div class="analytics-card">
+    <div class="chart-bars">
+      <div class="chart-bar-item">
+        <div class="chart-bar-label">17/19</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="height:89%"></div></div>
+        <div class="chart-bar-week">6/29週</div>
+      </div>
+      <div class="chart-bar-item">
+        <div class="chart-bar-label">16/19</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="height:84%"></div></div>
+        <div class="chart-bar-week">7/6週</div>
+      </div>
+      <div class="chart-bar-item">
+        <div class="chart-bar-label">17/19</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="height:89%"></div></div>
+        <div class="chart-bar-week">7/13週</div>
+      </div>
+      <div class="chart-bar-item">
+        <div class="chart-bar-label">18/19</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="height:95%"></div></div>
+        <div class="chart-bar-week">7/20週</div>
+      </div>
+      <div class="chart-bar-item">
+        <div class="chart-bar-label">18/19</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="height:95%"></div></div>
+        <div class="chart-bar-week">7/27週</div>
+      </div>
+      <div class="chart-bar-item">
+        <div class="chart-bar-label">19/19</div>
+        <div class="chart-bar-track"><div class="chart-bar-fill" style="height:100%"></div></div>
+        <div class="chart-bar-week">8/3週</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>調子の内訳推移</h2>
+  <div class="analytics-card">
+    <div class="chart-legend">
+      <span><span class="sq sq-happy"></span>順調</span>
+      <span><span class="sq sq-meh"></span>遅れ気味</span>
+      <span><span class="sq sq-sos"></span>要フォロー</span>
+    </div>
+    <div class="chart-stacks">
+      <div class="chart-stack-item">
+        <div class="chart-stack-track">
+          <div class="chart-stack-seg seg-sos" style="height:12%"></div>
+          <div class="chart-stack-seg seg-meh" style="height:23%"></div>
+          <div class="chart-stack-seg seg-happy" style="height:65%"></div>
+        </div>
+        <div class="chart-stack-week">6/29週</div>
+      </div>
+      <div class="chart-stack-item">
+        <div class="chart-stack-track">
+          <div class="chart-stack-seg seg-sos" style="height:12%"></div>
+          <div class="chart-stack-seg seg-meh" style="height:25%"></div>
+          <div class="chart-stack-seg seg-happy" style="height:63%"></div>
+        </div>
+        <div class="chart-stack-week">7/6週</div>
+      </div>
+      <div class="chart-stack-item">
+        <div class="chart-stack-track">
+          <div class="chart-stack-seg seg-sos" style="height:12%"></div>
+          <div class="chart-stack-seg seg-meh" style="height:23%"></div>
+          <div class="chart-stack-seg seg-happy" style="height:65%"></div>
+        </div>
+        <div class="chart-stack-week">7/13週</div>
+      </div>
+      <div class="chart-stack-item">
+        <div class="chart-stack-track">
+          <div class="chart-stack-seg seg-sos" style="height:11%"></div>
+          <div class="chart-stack-seg seg-meh" style="height:22%"></div>
+          <div class="chart-stack-seg seg-happy" style="height:67%"></div>
+        </div>
+        <div class="chart-stack-week">7/20週</div>
+      </div>
+      <div class="chart-stack-item">
+        <div class="chart-stack-track">
+          <div class="chart-stack-seg seg-sos" style="height:11%"></div>
+          <div class="chart-stack-seg seg-meh" style="height:17%"></div>
+          <div class="chart-stack-seg seg-happy" style="height:72%"></div>
+        </div>
+        <div class="chart-stack-week">7/27週</div>
+      </div>
+      <div class="chart-stack-item">
+        <div class="chart-stack-track">
+          <div class="chart-stack-seg seg-sos" style="height:5%"></div>
+          <div class="chart-stack-seg seg-meh" style="height:16%"></div>
+          <div class="chart-stack-seg seg-happy" style="height:79%"></div>
+        </div>
+        <div class="chart-stack-week">8/3週</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>SOS件数と対応状況</h2>
+  <div class="stat-cards">
+    <div class="stat-card">
+      <div class="stat-card-num">4</div>
+      <div class="stat-card-label">今月のSOS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num">1</div>
+      <div class="stat-card-label">対応中</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num">3</div>
+      <div class="stat-card-label">完了</div>
+    </div>
+  </div>
+
+  <h2>気になる兆候（サンプル）</h2>
+  <ul class="signal-list">
+    <li>3週連続で成果物の添付がない社員が1名</li>
+    <li>IT広告部門で新規案件の入稿遅延が2週連続</li>
+    <li>飲食部門でシフト調整の負荷が1名に偏っている</li>
+  </ul>
+
+  <div class="key-box">
+    <strong>実データの置き場所について</strong>
+    <p>本物の分析データは、この公開サイトには置きません。
+Notion の「経営分析」ページに蓄積し、社長と幹部だけに共有します。
+Notion の共有設定が「鍵」の役割を果たします。</p>
+  </div>
+
+</div>
+
+</body>
+</html>
