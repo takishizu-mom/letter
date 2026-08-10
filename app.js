@@ -39,42 +39,23 @@
   }
 
   /* ------------------------------------------------------------------
-   * スライド送り（slides.html）
+   * 読み進みバー（slides.html）
    * ---------------------------------------------------------------- */
-  function initSlides() {
-    var slides = document.querySelectorAll(".slide");
-    if (!slides.length) return;
+  function initProgressBar() {
+    var fill = document.querySelector(".progress-bar-fill");
+    if (!fill) return;
 
-    var current = 0;
-    var pageEl = document.querySelector(".slide-page");
-    var prevBtn = document.querySelector("[data-slide-prev]");
-    var nextBtn = document.querySelector("[data-slide-next]");
-
-    function render() {
-      slides.forEach(function (s, i) {
-        s.classList.toggle("active", i === current);
-      });
-      if (pageEl) pageEl.textContent = (current + 1) + " / " + slides.length;
-      if (prevBtn) prevBtn.disabled = current === 0;
-      if (nextBtn) nextBtn.disabled = current === slides.length - 1;
+    function update() {
+      var doc = document.documentElement;
+      var scrollTop = window.pageYOffset || doc.scrollTop;
+      var height = doc.scrollHeight - doc.clientHeight;
+      var pct = height > 0 ? (scrollTop / height) * 100 : 0;
+      fill.style.width = pct + "%";
     }
 
-    function go(delta) {
-      var next = current + delta;
-      if (next < 0 || next >= slides.length) return;
-      current = next;
-      render();
-    }
-
-    if (prevBtn) prevBtn.addEventListener("click", function () { go(-1); });
-    if (nextBtn) nextBtn.addEventListener("click", function () { go(1); });
-
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowRight") go(1);
-      if (e.key === "ArrowLeft") go(-1);
-    });
-
-    render();
+    window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    update();
   }
 
   /* ------------------------------------------------------------------
@@ -430,7 +411,7 @@
 
   /* ------------------------------------------------------------------ */
   document.addEventListener("DOMContentLoaded", function () {
-    initSlides();
+    initProgressBar();
     initTabs();
     initFilters();
     initCopyButtons();
