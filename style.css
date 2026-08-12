@@ -410,21 +410,13 @@ strong{ color:var(--highlight); }
   width:100%;
   height:auto;
 }
-.slide-figure .iso-fig{
-  display:block;
-  width:100%;
-  height:auto;
-}
-.slide-figure .iso-fig text{
-  font-family:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",system-ui,sans-serif;
-}
 .slide-figure-caption{
   margin:8px 0 0;
   color:var(--gray);
   font-size:12px;
   text-align:center;
 }
-.slide-figure--cover{ max-width:180px; }
+.slide-figure--cover{ max-width:280px; }
 
 .slide h2{
   font-size:clamp(20px, 4vw, 28px);
