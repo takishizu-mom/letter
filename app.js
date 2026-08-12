@@ -112,54 +112,121 @@
   }
 
   /* ------------------------------------------------------------------
-   * 読み進めると次のスライドが現れる演出（slides.html）
+   * 紙芝居モード（slides.html）
+   * 開くと01だけ表示。タップ/クリックまたは→キーで1枚ずつ進み、
+   * 13の次で資料モード（全部縦並び・スクロール）に切り替わる。
+   * 毎回01から始まる（記憶しない）。JSが動かない環境では既定CSSの
+   * まま資料モードで表示される。
    * ---------------------------------------------------------------- */
-  function initSlideReveal() {
+  function initSlideDeck() {
     var deck = document.querySelector(".slide-deck");
     if (!deck) return;
 
     var slides = Array.prototype.slice.call(deck.querySelectorAll(".slide"));
     if (!slides.length) return;
 
-    var reduceMotion = window.matchMedia &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var skipBtn = document.getElementById("deckSkip");
+    var root = document.documentElement;
+    var total = slides.length;
+    var index = 0;
+    var mode = "deck"; // "deck"（紙芝居） | "doc"（資料）
 
-    if (reduceMotion || !("IntersectionObserver" in window)) {
-      // 順次表示を無効化し、既定CSSのまま全表示にする
-      return;
+    function reduceMotion() {
+      return !!(window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     }
 
-    document.documentElement.classList.add("js-reveal");
+    function updateDeckProgress() {
+      var fill = document.querySelector(".progress-bar-fill");
+      if (!fill) return;
+      fill.style.width = (((index + 1) / total) * 100) + "%";
+    }
 
-    // 表紙(01)と02は最初から表示
-    slides.forEach(function (slide, idx) {
-      if (idx <= 1) slide.classList.add("is-revealed");
+    function showSlide(newIndex) {
+      var prev = slides[index];
+      var next = slides[newIndex];
+      if (!next || next === prev) return;
+
+      prev.classList.remove("is-current");
+      if (reduceMotion()) {
+        prev.classList.remove("is-leaving");
+      } else {
+        prev.classList.add("is-leaving");
+        setTimeout(function () {
+          prev.classList.remove("is-leaving");
+        }, 260);
+      }
+
+      next.classList.add("is-current");
+      next.scrollTop = 0;
+
+      index = newIndex;
+      updateDeckProgress();
+    }
+
+    function switchToDocMode() {
+      if (mode !== "deck") return;
+      mode = "doc";
+
+      function finish() {
+        root.classList.remove("js-deck");
+        slides.forEach(function (s) {
+          s.classList.remove("is-current", "is-leaving");
+        });
+        window.scrollTo(0, 0);
+        if (updateProgressBar) updateProgressBar();
+        deck.classList.remove("deck-fading");
+      }
+
+      if (reduceMotion()) {
+        finish();
+        return;
+      }
+      deck.classList.add("deck-fading");
+      setTimeout(finish, 200);
+    }
+
+    function advance() {
+      if (mode !== "deck") return;
+      if (index >= total - 1) {
+        switchToDocMode();
+        return;
+      }
+      showSlide(index + 1);
+    }
+
+    function goBack() {
+      if (mode !== "deck") return;
+      if (index <= 0) return;
+      showSlide(index - 1);
+    }
+
+    root.classList.add("js-deck");
+    slides[0].classList.add("is-current");
+    updateDeckProgress();
+
+    document.addEventListener("click", function () {
+      advance();
     });
 
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        var idx = slides.indexOf(entry.target);
-        var next = slides[idx + 1];
-        if (next && !next.classList.contains("is-revealed")) {
-          next.classList.add("is-revealed");
-          if (updateProgressBar) updateProgressBar();
-        }
-        observer.unobserve(entry.target);
-      });
-    }, { root: null, rootMargin: "0px 0px -30% 0px", threshold: 0 });
-
-    // 02は最初から画面内に収まっていることが多く、observe() 直後の初回通知を
-    // そのまま使うとスクロール前に03が現れてしまう。実際にスクロールが
-    // 発生してから観測を開始することで、初期表示時点では何も反応させない。
-    function startObserving() {
-      slides.forEach(function (slide, idx) {
-        if (idx >= 1 && idx <= slides.length - 2) {
-          observer.observe(slide);
-        }
+    if (skipBtn) {
+      skipBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        switchToDocMode();
       });
     }
-    window.addEventListener("scroll", startObserving, { passive: true, once: true });
+
+    document.addEventListener("keydown", function (e) {
+      if (mode !== "deck") return;
+      if (skipBtn && document.activeElement === skipBtn) return;
+      if (e.key === "ArrowRight" || e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
+        advance();
+      } else if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        goBack();
+      }
+    });
   }
 
   /* ------------------------------------------------------------------
@@ -978,7 +1045,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     initSplash();
     initProgressBar();
-    initSlideReveal();
+    initSlideDeck();
     initTabs();
     initFilters();
     initCopyButtons();

@@ -387,18 +387,8 @@ strong{ color:var(--highlight); }
   background:#fff;
   border-radius:var(--radius);
   box-shadow:var(--shadow-card);
-  opacity:1;
-  transform:translateY(0);
-  transition:opacity .5s ease-out, transform .5s ease-out;
 }
 .slide:last-child{ margin-bottom:0; }
-
-/* 読み進み演出：JSが動いたときだけ未表示スライドを隠す（フォールバックは常に全表示） */
-.js-reveal .slide:not(.is-revealed){
-  opacity:0;
-  transform:translateY(12px);
-  pointer-events:none;
-}
 
 .slide-num{
   color:var(--accent-dark);
@@ -443,6 +433,78 @@ strong{ color:var(--highlight); }
 .slide-cover p{
   color:var(--gray);
   font-size:17px;
+}
+
+/* ---------- スキップボタン（紙芝居モード中のみ表示） ---------- */
+.deck-skip-btn{
+  display:none;
+  position:fixed;
+  top:14px;
+  right:16px;
+  z-index:200;
+  padding:8px 14px;
+  font-size:13px;
+}
+.js-deck .deck-skip-btn{ display:inline-flex; }
+
+/* ---------- 紙芝居モード（JSが動いたときだけ .js-deck が付く。既定は資料モード＝上のスタイルのまま） ---------- */
+.js-deck .site-header{ display:none; }
+
+.js-deck{ height:100%; overflow:hidden; }
+.js-deck body{
+  height:100%;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+}
+.js-deck .slide-deck{
+  flex:1 1 auto;
+  min-height:0;
+  padding-top:60px;
+  display:grid;
+  grid-template-columns:1fr;
+  grid-template-rows:1fr;
+  align-items:center;
+  overscroll-behavior:none;
+}
+.js-deck .slide{
+  grid-column:1;
+  grid-row:1;
+  width:100%;
+  max-height:100%;
+  overflow-y:auto;
+  margin:0;
+  opacity:0;
+  transform:translateY(10px);
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .35s ease-out, transform .35s ease-out, visibility 0s linear 0s;
+}
+.js-deck .slide.is-current{
+  opacity:1;
+  transform:translateY(0);
+  visibility:visible;
+  pointer-events:auto;
+}
+.js-deck .slide.is-leaving{
+  opacity:0;
+  transform:translateY(-8px);
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .25s ease-in, transform .25s ease-in, visibility 0s linear .25s;
+}
+
+/* 紙芝居モード → 資料モードへの切り替え時のフェード */
+.slide-deck{ transition:opacity .2s ease; }
+.slide-deck.deck-fading{ opacity:0; }
+
+@media (prefers-reduced-motion: reduce){
+  .js-deck .slide,
+  .js-deck .slide.is-current,
+  .js-deck .slide.is-leaving{
+    transition:none;
+  }
+  .slide-deck{ transition:none; }
 }
 
 .table-wrap{
