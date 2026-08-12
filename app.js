@@ -126,6 +126,8 @@
     if (!slides.length) return;
 
     var skipBtn = document.getElementById("deckSkip");
+    var leftArrow = document.getElementById("deckPrev");
+    var rightArrow = document.getElementById("deckNext");
     var root = document.documentElement;
     var total = slides.length;
     var index = 0;
@@ -141,6 +143,14 @@
       var fill = document.querySelector(".progress-bar-fill");
       if (!fill) return;
       fill.style.width = (((index + 1) / total) * 100) + "%";
+    }
+
+    function updateArrowsState() {
+      if (leftArrow) leftArrow.style.visibility = index === 0 ? "hidden" : "visible";
+    }
+
+    function stopArrowBlink() {
+      if (rightArrow) rightArrow.classList.remove("is-blinking");
     }
 
     function showSlide(newIndex) {
@@ -163,6 +173,7 @@
 
       index = newIndex;
       updateDeckProgress();
+      updateArrowsState();
     }
 
     function switchToDocMode() {
@@ -189,6 +200,7 @@
 
     function advance() {
       if (mode !== "deck") return;
+      stopArrowBlink(); // 一度でも進んだら点滅を止める(表示は残す)
       if (index >= total - 1) {
         switchToDocMode();
         return;
@@ -205,6 +217,8 @@
     root.classList.add("js-deck");
     slides[0].classList.add("is-current");
     updateDeckProgress();
+    updateArrowsState();
+    if (rightArrow && !reduceMotion()) rightArrow.classList.add("is-blinking");
 
     document.addEventListener("click", function (e) {
       var interactive = e.target.closest && e.target.closest(INTERACTIVE_SELECTOR);
@@ -219,16 +233,36 @@
       });
     }
 
+    if (rightArrow) {
+      rightArrow.addEventListener("click", function (e) {
+        e.stopPropagation();
+        advance();
+      });
+    }
+    if (leftArrow) {
+      leftArrow.addEventListener("click", function (e) {
+        e.stopPropagation();
+        goBack();
+      });
+    }
+
     document.addEventListener("keydown", function (e) {
       if (mode !== "deck") return;
-      var active = document.activeElement;
-      if (active && active.closest && active.closest(INTERACTIVE_SELECTOR)) return;
-      if (e.key === "ArrowRight" || e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+      if (e.key === "ArrowRight") {
         e.preventDefault();
         advance();
-      } else if (e.key === "ArrowLeft") {
+        return;
+      }
+      if (e.key === "ArrowLeft") {
         e.preventDefault();
         goBack();
+        return;
+      }
+      var active = document.activeElement;
+      if (active && active.closest && active.closest(INTERACTIVE_SELECTOR)) return;
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+        e.preventDefault();
+        advance();
       }
     });
   }

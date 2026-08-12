@@ -458,6 +458,7 @@ strong{ color:var(--highlight); }
   flex-direction:column;
 }
 .js-deck .slide-deck{
+  position:relative;
   flex:1 1 auto;
   min-height:0;
   padding-top:60px;
@@ -498,6 +499,39 @@ strong{ color:var(--highlight); }
 .slide-deck{ transition:opacity .2s ease; }
 .slide-deck.deck-fading{ opacity:0; }
 
+/* ---------- 紙芝居モードの左右矢印（進む／戻る の目印） ---------- */
+.deck-arrow{
+  display:none;
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:44px;
+  height:44px;
+  align-items:center;
+  justify-content:center;
+  border:none;
+  background:none;
+  padding:0;
+  margin:0;
+  color:var(--accent);
+  font-size:22px;
+  line-height:1;
+  opacity:.28;
+  cursor:pointer;
+  z-index:5;
+}
+.js-deck .deck-arrow{ display:flex; }
+.deck-arrow-left{ left:0; }
+.deck-arrow-right{ right:0; }
+
+@keyframes deck-arrow-blink{
+  0%, 100%{ opacity:.18; }
+  50%{ opacity:.38; }
+}
+.deck-arrow-right.is-blinking{
+  animation:deck-arrow-blink 2.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce){
   .js-deck .slide,
   .js-deck .slide.is-current,
@@ -505,6 +539,10 @@ strong{ color:var(--highlight); }
     transition:none;
   }
   .slide-deck{ transition:none; }
+  .deck-arrow-right.is-blinking{
+    animation:none;
+    opacity:.28;
+  }
 }
 
 .table-wrap{
