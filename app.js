@@ -130,6 +130,7 @@
     var total = slides.length;
     var index = 0;
     var mode = "deck"; // "deck"（紙芝居） | "doc"（資料）
+    var INTERACTIVE_SELECTOR = "a[href], button, input, textarea, select, [role='button']";
 
     function reduceMotion() {
       return !!(window.matchMedia &&
@@ -205,7 +206,9 @@
     slides[0].classList.add("is-current");
     updateDeckProgress();
 
-    document.addEventListener("click", function () {
+    document.addEventListener("click", function (e) {
+      var interactive = e.target.closest && e.target.closest(INTERACTIVE_SELECTOR);
+      if (interactive) return; // リンク・ボタンは本来の動作にまかせる
       advance();
     });
 
@@ -218,7 +221,8 @@
 
     document.addEventListener("keydown", function (e) {
       if (mode !== "deck") return;
-      if (skipBtn && document.activeElement === skipBtn) return;
+      var active = document.activeElement;
+      if (active && active.closest && active.closest(INTERACTIVE_SELECTOR)) return;
       if (e.key === "ArrowRight" || e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
         e.preventDefault();
         advance();
