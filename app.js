@@ -802,6 +802,124 @@
     });
   }
 
+  /* ------------------------------------------------------------------
+   * analytics.html：SOSカード（今月のSOS／対応中／完了）のドリルダウン。
+   * 数字はハードコードせず、ANALYTICS_STAFF から算出する。
+   * 集計ルール：
+   *  - 対象期間＝直近4週（ANALYTICS_WEEKS の後ろ4つ）
+   *  - 同じ人の連続した status:"sos" は1案件としてまとめる
+   *  - 案件の開始週が対象期間内のものだけを数える
+   *  - 最新週まで sos が続いていれば「対応中」、それ以外は「完了」
+   * ---------------------------------------------------------------- */
+  function computeAnalyticsSosCases() {
+    var periodStart = ANALYTICS_WEEKS.length - 4;
+    var latestIndex = ANALYTICS_WEEKS.length - 1;
+    var cases = [];
+
+    ANALYTICS_STAFF.forEach(function (person) {
+      var i = 0;
+      while (i < person.weeks.length) {
+        if (person.weeks[i].status === "sos") {
+          var start = i;
+          var end = i;
+          while (end + 1 < person.weeks.length && person.weeks[end + 1].status === "sos") {
+            end++;
+          }
+          if (start >= periodStart) {
+            cases.push({ person: person, startIdx: start, endIdx: end, ongoing: end === latestIndex });
+          }
+          i = end + 1;
+        } else {
+          i++;
+        }
+      }
+    });
+
+    return cases;
+  }
+
+  function analyticsSosCaseStatusText(kase) {
+    var statusLabel = kase.ongoing ? "対応中" : "完了";
+    if (kase.startIdx === kase.endIdx) {
+      return ANALYTICS_WEEKS[kase.startIdx] + "週に発生・" + statusLabel;
+    }
+    return ANALYTICS_WEEKS[kase.startIdx] + "週〜" + ANALYTICS_WEEKS[kase.endIdx] + "週・" + statusLabel;
+  }
+
+  function renderAnalyticsSosCards(cases) {
+    var totalEl = document.getElementById("sosCardTotal");
+    var ongoingEl = document.getElementById("sosCardOngoing");
+    var doneEl = document.getElementById("sosCardDone");
+    var ongoingCount = cases.filter(function (c) { return c.ongoing; }).length;
+    var doneCount = cases.length - ongoingCount;
+    if (totalEl) totalEl.textContent = cases.length;
+    if (ongoingEl) ongoingEl.textContent = ongoingCount;
+    if (doneEl) doneEl.textContent = doneCount;
+  }
+
+  function renderAnalyticsSosPanel(panel, cases, filter) {
+    var filtered = cases.filter(function (c) {
+      if (filter === "ongoing") return c.ongoing;
+      if (filter === "done") return !c.ongoing;
+      return true;
+    });
+    var rows = filtered.map(function (c) {
+      return analyticsRowHtml(c.person, analyticsSosCaseStatusText(c), false, "sq-sos");
+    });
+    var headLabel = filter === "ongoing" ? "対応中のSOS" :
+      filter === "done" ? "対応が完了したSOS" : "直近1か月のSOS";
+    var head = headLabel + "（" + filtered.length + "件）";
+    var noteHtml = '<div class="drilldown-sos-note">この一覧は社長のみ表示されます。困っている内容の中身は、さらに社長だけが見られます。</div>';
+
+    panel.innerHTML =
+      '<div class="drilldown-head">' + head + '</div>' +
+      '<div class="drilldown-rows">' + rows.join("") + '</div>' +
+      noteHtml;
+    panel.hidden = false;
+  }
+
+  function initAnalyticsSosDrilldown() {
+    var cards = document.querySelectorAll(".stat-cards .stat-card");
+    var panel = document.getElementById("sosDrilldown");
+    if (!cards.length || !panel) return;
+
+    var cases = computeAnalyticsSosCases();
+    renderAnalyticsSosCards(cases);
+
+    var filters = [null, "ongoing", "done"];
+    var labels = ["直近1か月のSOSの内訳を見る", "対応中のSOSの内訳を見る", "完了したSOSの内訳を見る"];
+    var openIndex = null;
+
+    cards.forEach(function (card, idx) {
+      var filter = filters[idx];
+      card.setAttribute("role", "button");
+      card.setAttribute("tabindex", "0");
+      card.setAttribute("aria-label", labels[idx]);
+
+      function toggle() {
+        if (openIndex === idx) {
+          panel.hidden = true;
+          panel.innerHTML = "";
+          card.classList.remove("is-selected");
+          openIndex = null;
+          return;
+        }
+        cards.forEach(function (c) { c.classList.remove("is-selected"); });
+        card.classList.add("is-selected");
+        openIndex = idx;
+        renderAnalyticsSosPanel(panel, cases, filter);
+      }
+
+      card.addEventListener("click", toggle);
+      card.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
+          e.preventDefault();
+          toggle();
+        }
+      });
+    });
+  }
+
   /* ------------------------------------------------------------------ */
   document.addEventListener("DOMContentLoaded", function () {
     initSplash();
@@ -812,5 +930,6 @@
     initSlackMocks();
     initWeekToggle();
     initAnalyticsDrilldown();
+    initAnalyticsSosDrilldown();
   });
 })();

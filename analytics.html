@@ -25,7 +25,7 @@
 <div class="container">
 
   <h1 style="margin-bottom:4px;">経営分析（デモ）</h1>
-  <p style="color:var(--gray); margin-top:0;">導入すると、こんな分析が自動で蓄積されます。ここに表示しているのはサンプルデータです。グラフのバーをタップすると、その内訳の社員一覧が開きます。</p>
+  <p style="color:var(--gray); margin-top:0;">導入すると、こんな分析が自動で蓄積されます。ここに表示しているのはサンプルデータです。グラフのバーをタップすると、その内訳の社員一覧が開きます。SOSのカードも同じようにタップできます。</p>
 
   <h2>提出率の推移</h2>
   <div class="analytics-card">
@@ -127,23 +127,24 @@
   <h2>SOS件数と対応状況</h2>
   <div class="stat-cards">
     <div class="stat-card">
-      <div class="stat-card-num">4</div>
-      <div class="stat-card-label">今月のSOS</div>
+      <div class="stat-card-num" id="sosCardTotal"></div>
+      <div class="stat-card-label">直近1か月のSOS</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-num">1</div>
+      <div class="stat-card-num" id="sosCardOngoing"></div>
       <div class="stat-card-label">対応中</div>
     </div>
     <div class="stat-card">
-      <div class="stat-card-num">3</div>
+      <div class="stat-card-num" id="sosCardDone"></div>
       <div class="stat-card-label">完了</div>
     </div>
   </div>
+  <div class="drilldown-panel sos-cards-drilldown" id="sosDrilldown" hidden></div>
 
   <h2>気になる兆候（サンプル）</h2>
   <ul class="signal-list">
     <li>高橋 健（飲食）… 3週連続で成果物の添付がありません</li>
-    <li>中村 拓也（飲食）… 2週連続で要フォロー。SOSは対応中です</li>
+    <li>中村 拓也（飲食）… 2週連続で要フォロー。SOSは完了しています</li>
     <li>佐藤 花子（飲食）… 4週のうち3週が遅れ気味。業務量の確認をおすすめします</li>
   </ul>
 

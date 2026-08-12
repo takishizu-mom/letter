@@ -1480,6 +1480,26 @@ section.block{ margin:44px 0; }
   box-shadow:var(--shadow-card);
   padding:20px;
   text-align:center;
+  cursor:pointer;
+  transition:filter .15s ease, box-shadow .15s ease;
+}
+.stat-card:hover{
+  filter:brightness(1.04);
+}
+.stat-card:focus-visible{
+  outline:2px solid var(--accent-dark);
+  outline-offset:2px;
+}
+.stat-card.is-selected{
+  box-shadow:inset 0 0 0 2px var(--accent-dark), var(--shadow-card);
+}
+#sosDrilldown.drilldown-panel:not([hidden]){
+  background:#fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow-card);
+  padding:18px;
+  margin-top:-14px;
+  border-top:none;
 }
 .stat-card-num{
   font-size:32px;
