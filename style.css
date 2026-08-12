@@ -387,8 +387,18 @@ strong{ color:var(--highlight); }
   background:#fff;
   border-radius:var(--radius);
   box-shadow:var(--shadow-card);
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity .5s ease-out, transform .5s ease-out;
 }
 .slide:last-child{ margin-bottom:0; }
+
+/* 読み進み演出：JSが動いたときだけ未表示スライドを隠す（フォールバックは常に全表示） */
+.js-reveal .slide:not(.is-revealed){
+  opacity:0;
+  transform:translateY(12px);
+  pointer-events:none;
+}
 
 .slide-num{
   color:var(--accent-dark);
@@ -418,6 +428,12 @@ strong{ color:var(--highlight); }
 .slide-cover{
   align-items:center;
   text-align:center;
+}
+.slide-cover .slide-num{
+  position:absolute;
+  top:40px;
+  left:32px;
+  margin:0;
 }
 .slide-cover h1{
   font-size:clamp(30px, 7vw, 44px);
@@ -1549,6 +1565,7 @@ section.block{ margin:44px 0; }
 @media (max-width:600px){
   .container{ padding:12px 14px 48px; }
   .slide{ padding:26px 18px; }
+  .slide-cover .slide-num{ top:26px; left:18px; }
   .flow-branch{ gap:10px; }
   .flow-branch .flow-box{ font-size:12px; padding:10px 8px; }
   .flow-step-num{ font-size:11px; }

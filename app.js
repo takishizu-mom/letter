@@ -91,6 +91,8 @@
   /* ------------------------------------------------------------------
    * 読み進みバー（slides.html）
    * ---------------------------------------------------------------- */
+  var updateProgressBar = null;
+
   function initProgressBar() {
     var fill = document.querySelector(".progress-bar-fill");
     if (!fill) return;
@@ -103,9 +105,61 @@
       fill.style.width = pct + "%";
     }
 
+    updateProgressBar = update;
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
     update();
+  }
+
+  /* ------------------------------------------------------------------
+   * 読み進めると次のスライドが現れる演出（slides.html）
+   * ---------------------------------------------------------------- */
+  function initSlideReveal() {
+    var deck = document.querySelector(".slide-deck");
+    if (!deck) return;
+
+    var slides = Array.prototype.slice.call(deck.querySelectorAll(".slide"));
+    if (!slides.length) return;
+
+    var reduceMotion = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      // 順次表示を無効化し、既定CSSのまま全表示にする
+      return;
+    }
+
+    document.documentElement.classList.add("js-reveal");
+
+    // 表紙(01)と02は最初から表示
+    slides.forEach(function (slide, idx) {
+      if (idx <= 1) slide.classList.add("is-revealed");
+    });
+
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var idx = slides.indexOf(entry.target);
+        var next = slides[idx + 1];
+        if (next && !next.classList.contains("is-revealed")) {
+          next.classList.add("is-revealed");
+          if (updateProgressBar) updateProgressBar();
+        }
+        observer.unobserve(entry.target);
+      });
+    }, { root: null, rootMargin: "0px 0px -30% 0px", threshold: 0 });
+
+    // 02は最初から画面内に収まっていることが多く、observe() 直後の初回通知を
+    // そのまま使うとスクロール前に03が現れてしまう。実際にスクロールが
+    // 発生してから観測を開始することで、初期表示時点では何も反応させない。
+    function startObserving() {
+      slides.forEach(function (slide, idx) {
+        if (idx >= 1 && idx <= slides.length - 2) {
+          observer.observe(slide);
+        }
+      });
+    }
+    window.addEventListener("scroll", startObserving, { passive: true, once: true });
   }
 
   /* ------------------------------------------------------------------
@@ -924,6 +978,7 @@
   document.addEventListener("DOMContentLoaded", function () {
     initSplash();
     initProgressBar();
+    initSlideReveal();
     initTabs();
     initFilters();
     initCopyButtons();
