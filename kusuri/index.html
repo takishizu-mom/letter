@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>おくすりチェック</title>
+<style>
+  :root { --bg:#f4f8fb; --card:#fff; --text:#1d2b36; --sub:#6b7c8a; --main:#2f8fd0; --ok:#2ea36b; --warn:#e0663a; --line:#dde6ee; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#111a21; --card:#1b2731; --text:#e6eef4; --sub:#8fa2b1; --line:#2b3a46; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,"Hiragino Sans",sans-serif; }
+  main { max-width:520px; margin:0 auto; padding:16px; }
+  h1 { font-size:20px; margin:8px 0 4px; }
+  .sub { color:var(--sub); font-size:13px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px; margin:12px 0; }
+  .next { text-align:center; }
+  .next .when { font-size:22px; font-weight:700; margin:6px 0 12px; }
+  .bigbtn { width:100%; font-size:20px; font-weight:700; padding:18px; border:0; border-radius:12px; background:var(--main); color:#fff; }
+  .bigbtn:disabled { background:var(--ok); }
+  .bar { height:10px; background:var(--line); border-radius:6px; overflow:hidden; margin-top:8px; }
+  .bar > div { height:100%; background:var(--ok); }
+  table { width:100%; border-collapse:collapse; font-size:15px; }
+  td, th { padding:8px 4px; border-bottom:1px solid var(--line); text-align:center; }
+  th { color:var(--sub); font-weight:500; font-size:13px; }
+  td:first-child { text-align:left; }
+  .dose { width:44px; height:44px; border-radius:50%; border:2px solid var(--line); background:transparent; font-size:18px; color:var(--text); }
+  .dose.done { background:var(--ok); border-color:var(--ok); color:#fff; }
+  .dose.late { border-color:var(--warn); color:var(--warn); }
+  .na { color:var(--line); }
+  .log { font-size:13px; color:var(--sub); line-height:1.8; }
+  .small { font-size:12px; color:var(--sub); background:none; border:0; text-decoration:underline; padding:0; }
+</style>
+</head>
+<body>
+<main>
+  <h1>💊 ホスミシン錠500</h1>
+  <div class="sub">1回1錠・1日3回 毎食後・7日分（全21錠）</div>
+
+  <div class="card next">
+    <div class="sub">つぎのおくすり</div>
+    <div class="when" id="nextWhen"></div>
+    <button class="bigbtn" id="takeBtn">のんだ！</button>
+    <div class="bar"><div id="prog"></div></div>
+    <div class="sub" id="progText" style="margin-top:6px"></div>
+  </div>
+
+  <div class="card">
+    <table id="tbl"><thead><tr><th>日付</th><th>朝</th><th>昼</th><th>夜</th></tr></thead><tbody></tbody></table>
+    <div class="sub" style="margin-top:8px">丸をタップでも記録・取り消しできます</div>
+  </div>
+
+  <div class="card">
+    <b>履歴</b>
+    <div class="log" id="log"></div>
+    <button class="small" id="exportBtn">履歴をコピー</button>
+  </div>
+</main>
+<script>
+  // 処方: 2026/10/23 昼から開始、毎食後1錠 × 21回
+  const START = new Date(2026, 9, 23);
+  const MEALS = [{ k: 'a', name: '朝', h: 8 }, { k: 'b', name: '昼', h: 13 }, { k: 'c', name: '夜', h: 19 }];
+  const TOTAL = 21, KEY = 'kusuri-fosmicin-2026-10';
+
+  const doses = [];
+  for (let d = 0; doses.length < TOTAL; d++) {
+    for (const m of MEALS) {
+      if (d === 0 && m.k === 'a') continue; // 初日は昼から
+      if (doses.length >= TOTAL) break;
+      const day = new Date(START); day.setDate(day.getDate() + d);
+      const due = new Date(day); due.setHours(m.h, 0, 0, 0);
+      doses.push({ id: `${day.getMonth() + 1}/${day.getDate()}-${m.k}`, day, meal: m, due });
+    }
+  }
+
+  let taken = {};
+  try { taken = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) {}
+  const save = () => { try { localStorage.setItem(KEY, JSON.stringify(taken)); } catch (e) {} };
+
+  const wd = '日月火水木金土';
+  const fmtDay = d => `${d.getMonth() + 1}/${d.getDate()}(${wd[d.getDay()]})`;
+  const fmtTime = t => { const d = new Date(t); return `${fmtDay(d)} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
+
+  function toggle(id) {
+    if (taken[id]) { if (!confirm('この記録を取り消しますか？')) return; delete taken[id]; }
+    else taken[id] = Date.now();
+    save(); render();
+  }
+
+  function render() {
+    const now = new Date();
+    const next = doses.find(d => !taken[d.id]);
+    const count = doses.filter(d => taken[d.id]).length;
+    const btn = document.getElementById('takeBtn');
+    if (next) {
+      document.getElementById('nextWhen').textContent = `${fmtDay(next.day)} ${next.meal.name}ごはんのあと` + (next.due < now - 3 * 3600e3 ? ' ⚠️' : '');
+      btn.disabled = false; btn.textContent = 'のんだ！';
+      btn.onclick = () => toggle(next.id);
+    } else {
+      document.getElementById('nextWhen').textContent = 'ぜんぶ飲みきりました🎉';
+      btn.disabled = true; btn.textContent = 'おつかれさま！';
+    }
+    document.getElementById('prog').style.width = (count / TOTAL * 100) + '%';
+    document.getElementById('progText').textContent = `${count} / ${TOTAL} 錠（のこり ${TOTAL - count} 錠）`;
+
+    const tbody = document.querySelector('#tbl tbody'); tbody.innerHTML = '';
+    const days = [...new Set(doses.map(d => d.day.getTime()))];
+    for (const t of days) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${fmtDay(new Date(t))}</td>`;
+      for (const m of MEALS) {
+        const td = document.createElement('td');
+        const d = doses.find(x => x.day.getTime() === t && x.meal.k === m.k);
+        if (!d) { td.innerHTML = '<span class="na">－</span>'; }
+        else {
+          const b = document.createElement('button');
+          b.className = 'dose' + (taken[d.id] ? ' done' : (d.due < now - 3 * 3600e3 ? ' late' : ''));
+          b.textContent = taken[d.id] ? '✓' : '';
+          b.onclick = () => toggle(d.id);
+          td.appendChild(b);
+        }
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+
+    const lines = doses.filter(d => taken[d.id]).sort((a, b) => taken[b.id] - taken[a.id])
+      .map(d => `${fmtTime(taken[d.id])} … ${fmtDay(d.day)} ${d.meal.name}の分`);
+    document.getElementById('log').innerHTML = lines.length ? lines.join('<br>') : 'まだ記録はありません';
+    document.getElementById('exportBtn').onclick = () => {
+      navigator.clipboard?.writeText(lines.join('\n')).then(() => alert('コピーしました'));
+    };
+  }
+  render();
+  setInterval(render, 60000);
+</script>
+</body>
+</html>
