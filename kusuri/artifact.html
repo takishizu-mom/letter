@@ -59,6 +59,7 @@
     <div class="sub">つぎのおくすり</div>
     <div class="when" id="nextWhen">読み込み中…</div>
     <button class="bigbtn" id="takeBtn" type="button" disabled>のんだ！</button>
+    <button class="link" id="undoBtn" type="button" hidden></button>
     <div class="bar"><div id="prog" style="width:0"></div></div>
     <div class="sub" id="progText"></div>
     <div class="status" id="status"></div>
@@ -115,6 +116,16 @@
   }
   const label = id => { const d = doses.find(x => x.id === id); return `${fmtDay(d.day)} ${d.meal.name}`; };
 
+  let undoTimer = null;
+  function showUndo(id) {
+    const u = document.getElementById('undoBtn');
+    u.textContent = `まちがえた！「${label(id)}」の記録を取り消す`;
+    u.hidden = false;
+    u.onclick = () => { u.hidden = true; clearTimeout(undoTimer); mark(id, false); setStatus('取り消しました'); };
+    clearTimeout(undoTimer);
+    undoTimer = setTimeout(() => { u.hidden = true; }, 30000);
+  }
+
   function tapDose(id) {
     if (!taken[id]) return mark(id, true);
     if (armed === id) { armed = null; clearTimeout(armTimer); return mark(id, false); }
@@ -133,7 +144,7 @@
       when.textContent = `${fmtDay(next.day)} ${next.meal.name}ごはんのあと` + (late ? '（まだ）' : '');
       when.className = 'when' + (late ? ' late' : '');
       btn.disabled = false; btn.textContent = 'のんだ！';
-      btn.onclick = () => mark(next.id, true);
+      btn.onclick = () => { mark(next.id, true); showUndo(next.id); };
     } else {
       when.textContent = 'ぜんぶ飲みきりました';
       when.className = 'when';
