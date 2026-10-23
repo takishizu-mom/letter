@@ -1,0 +1,204 @@
+<title>ホスミシン服薬チェック</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700&display=swap">
+<style>
+  /* layout: 1カラムの薬袋。上に「つぎの1錠」、下に7日間のシートと履歴 */
+  :root {
+    --bg:#eef4f7; --card:#ffffff; --fg:#1c2d38; --sub:#647886; --line:#d6e2ea;
+    --accent:#2c7fb8; --ok:#2a9a68; --late:#d9622f; --on-accent:#ffffff;
+    --font:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Hiragino Sans",system-ui,sans-serif;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg:#0f1a21; --card:#18262f; --fg:#e4edf2; --sub:#8ea3b1; --line:#2a3b47;
+    --accent:#5aa7dc; --ok:#3dbb84; --late:#f0844f; --on-accent:#0f1a21; color-scheme:dark; } }
+  :root[data-theme="dark"] {
+    --bg:#0f1a21; --card:#18262f; --fg:#e4edf2; --sub:#8ea3b1; --line:#2a3b47;
+    --accent:#5aa7dc; --ok:#3dbb84; --late:#f0844f; --on-accent:#0f1a21; color-scheme:dark; }
+  * { box-sizing:border-box; }
+  body { background:var(--bg); color:var(--fg); font-family:var(--font); }
+  main { max-width:520px; margin:0 auto; padding-block:16px 32px;
+    padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));
+    display:grid; gap:14px; }
+  h1 { font-size:22px; margin:4px 0 2px; text-wrap:balance; }
+  .sub { color:var(--sub); font-size:13px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; }
+  .next { text-align:center; display:grid; gap:10px; }
+  .when { font-size:22px; font-weight:700; }
+  .when.late { color:var(--late); }
+  .bigbtn { width:100%; font:700 20px var(--font); padding:18px; border:0; border-radius:14px; background:var(--accent); color:var(--on-accent); cursor:pointer; }
+  .bigbtn:disabled { background:var(--ok); cursor:default; }
+  .bigbtn:focus-visible, .dose:focus-visible, .link:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  .bar { height:10px; background:var(--line); border-radius:6px; overflow:hidden; }
+  .bar > div { height:100%; background:var(--ok); transition:width .3s; }
+  .status { font-size:12px; color:var(--sub); text-align:center; }
+  .status.warn { color:var(--late); }
+  table { width:100%; border-collapse:collapse; font-size:15px; font-variant-numeric:tabular-nums; }
+  td, th { padding:7px 4px; border-bottom:1px solid var(--line); text-align:center; }
+  tr:last-child td { border-bottom:0; }
+  th { color:var(--sub); font-weight:500; font-size:13px; }
+  td:first-child { text-align:left; }
+  tr.today td:first-child { font-weight:700; color:var(--accent); }
+  .dose { width:44px; height:44px; border-radius:50%; border:2px solid var(--line); background:transparent; font:700 15px var(--font); color:var(--fg); cursor:pointer; }
+  .dose.done { background:var(--ok); border-color:var(--ok); color:var(--on-accent); }
+  .dose.late { border-color:var(--late); color:var(--late); }
+  .dose.arm { background:var(--late); border-color:var(--late); color:var(--on-accent); font-size:11px; }
+  .na { color:var(--line); }
+  .log { font-size:13px; color:var(--sub); line-height:1.9; font-variant-numeric:tabular-nums; }
+  .row { display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .link { font:500 13px var(--font); color:var(--accent); background:none; border:0; padding:0; text-decoration:underline; cursor:pointer; }
+  @media (prefers-reduced-motion: reduce) { .bar > div { transition:none; } }
+</style>
+
+<main>
+  <header>
+    <h1>ホスミシン錠500</h1>
+    <div class="sub">1回1錠・1日3回 毎食後・7日分（全21錠）／10月23日 昼から</div>
+  </header>
+
+  <section class="card next" aria-live="polite">
+    <div class="sub">つぎのおくすり</div>
+    <div class="when" id="nextWhen">読み込み中…</div>
+    <button class="bigbtn" id="takeBtn" type="button" disabled>のんだ！</button>
+    <div class="bar"><div id="prog" style="width:0"></div></div>
+    <div class="sub" id="progText"></div>
+    <div class="status" id="status"></div>
+  </section>
+
+  <section class="card">
+    <table id="tbl"><thead><tr><th>日付</th><th>朝</th><th>昼</th><th>夜</th></tr></thead><tbody></tbody></table>
+    <div class="sub" style="margin-top:8px">丸をタップで記録。記録ずみの丸は2回タップで取り消し</div>
+  </section>
+
+  <section class="card">
+    <div class="row"><b>飲んだ記録</b><button class="link" id="copyBtn" type="button">記録をコピー</button></div>
+    <div class="log" id="log"></div>
+  </section>
+</main>
+
+<script>
+  const START = new Date(2026, 9, 23);
+  const MEALS = [{ k: 'a', name: '朝', h: 8 }, { k: 'b', name: '昼', h: 13 }, { k: 'c', name: '夜', h: 19 }];
+  const TOTAL = 21, LS = 'kusuri-fosmicin-2026-10', LATE_MS = 3 * 3600e3;
+
+  const doses = [];
+  for (let d = 0; doses.length < TOTAL; d++) {
+    for (const m of MEALS) {
+      if (d === 0 && m.k === 'a') continue; // 初日は昼から
+      if (doses.length >= TOTAL) break;
+      const day = new Date(START); day.setDate(day.getDate() + d);
+      const due = new Date(day); due.setHours(m.h, 0, 0, 0);
+      const id = `${day.getMonth() + 1}-${day.getDate()}-${m.k}`;
+      doses.push({ id, day, meal: m, due });
+    }
+  }
+
+  let taken = {};
+  try { taken = JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) {}
+  const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify(taken)); } catch (e) {} };
+
+  let col = null, armed = null, armTimer = null;
+  const statusEl = document.getElementById('status');
+  const setStatus = (t, warn) => { statusEl.textContent = t; statusEl.className = 'status' + (warn ? ' warn' : ''); };
+
+  const wd = '日月火水木金土';
+  const fmtDay = d => `${d.getMonth() + 1}/${d.getDate()}(${wd[d.getDay()]})`;
+  const fmtTime = t => { const d = new Date(t); return `${fmtDay(d)} ${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`; };
+
+  async function mark(id, on) {
+    if (on) taken[id] = Date.now(); else delete taken[id];
+    saveLocal(); render();
+    if (!col) return;
+    try {
+      if (on) await col.doc(id).set({ takenAt: taken[id], label: label(id) });
+      else await col.doc(id).delete();
+    } catch (e) { setStatus('クラウドに保存できませんでした。この端末には記録してあります', true); }
+  }
+  const label = id => { const d = doses.find(x => x.id === id); return `${fmtDay(d.day)} ${d.meal.name}`; };
+
+  function tapDose(id) {
+    if (!taken[id]) return mark(id, true);
+    if (armed === id) { armed = null; clearTimeout(armTimer); return mark(id, false); }
+    armed = id; clearTimeout(armTimer);
+    armTimer = setTimeout(() => { armed = null; render(); }, 3000);
+    render();
+  }
+
+  function render() {
+    const now = new Date();
+    const next = doses.find(d => !taken[d.id]);
+    const count = doses.filter(d => taken[d.id]).length;
+    const btn = document.getElementById('takeBtn'), when = document.getElementById('nextWhen');
+    if (next) {
+      const late = now - next.due > LATE_MS;
+      when.textContent = `${fmtDay(next.day)} ${next.meal.name}ごはんのあと` + (late ? '（まだ）' : '');
+      when.className = 'when' + (late ? ' late' : '');
+      btn.disabled = false; btn.textContent = 'のんだ！';
+      btn.onclick = () => mark(next.id, true);
+    } else {
+      when.textContent = 'ぜんぶ飲みきりました';
+      when.className = 'when';
+      btn.disabled = true; btn.textContent = 'おつかれさま！';
+    }
+    document.getElementById('prog').style.width = (count / TOTAL * 100) + '%';
+    document.getElementById('progText').textContent = `${count} / ${TOTAL} 錠（のこり ${TOTAL - count} 錠）`;
+
+    const tbody = document.querySelector('#tbl tbody'); tbody.textContent = '';
+    const todayKey = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    for (const t of [...new Set(doses.map(d => d.day.getTime()))]) {
+      const tr = document.createElement('tr');
+      if (t === todayKey) tr.className = 'today';
+      const th = document.createElement('td'); th.textContent = fmtDay(new Date(t)) + (t === todayKey ? ' 今日' : '');
+      tr.appendChild(th);
+      for (const m of MEALS) {
+        const td = document.createElement('td');
+        const d = doses.find(x => x.day.getTime() === t && x.meal.k === m.k);
+        if (!d) td.innerHTML = '<span class="na">－</span>';
+        else {
+          const b = document.createElement('button'); b.type = 'button';
+          const done = !!taken[d.id];
+          b.className = 'dose' + (armed === d.id ? ' arm' : done ? ' done' : (now - d.due > LATE_MS ? ' late' : ''));
+          b.textContent = armed === d.id ? '取消?' : done ? '✓' : '';
+          b.setAttribute('aria-label', `${fmtDay(d.day)} ${m.name} ${done ? '飲んだ' : 'まだ'}`);
+          b.onclick = () => tapDose(d.id);
+          td.appendChild(b);
+        }
+        tr.appendChild(td);
+      }
+      tbody.appendChild(tr);
+    }
+
+    const lines = doses.filter(d => taken[d.id]).sort((a, b) => taken[b.id] - taken[a.id])
+      .map(d => `${fmtTime(taken[d.id])} に ${fmtDay(d.day)} ${d.meal.name}の分`);
+    const log = document.getElementById('log');
+    log.textContent = '';
+    if (!lines.length) log.textContent = 'まだ記録はありません。飲んだら上のボタンを押してね';
+    lines.forEach(l => { const div = document.createElement('div'); div.textContent = l; log.appendChild(div); });
+    document.getElementById('copyBtn').onclick = async () => {
+      try { await navigator.clipboard.writeText(lines.join('\n')); setStatus('記録をコピーしました'); }
+      catch (e) { setStatus('コピーできませんでした。記録を長押しで選んでね', true); }
+    };
+  }
+
+  render();
+  setInterval(render, 60000);
+
+  (async () => {
+    const db = await window.claude?.use?.('db');
+    if (!db) { setStatus('クラウド保存につながっていません。この端末だけに記録します', true); return; }
+    col = db.collection('doses');
+    let first = true;
+    col.onSnapshot(snap => {
+      const remote = {};
+      snap.docs.forEach(d => { const v = d.data(); if (v && v.takenAt) remote[d.id] = v.takenAt; });
+      if (first) {
+        first = false;
+        // この端末だけにある記録はクラウドへ送る
+        for (const [id, at] of Object.entries(taken)) {
+          if (!remote[id] && doses.some(x => x.id === id)) { remote[id] = at; col.doc(id).set({ takenAt: at, label: label(id) }).catch(() => {}); }
+        }
+      }
+      taken = remote; saveLocal(); render();
+      setStatus('クラウドに保存中（ブラウザを消しても残ります）');
+    }, () => setStatus('クラウドから読み込めませんでした。この端末には記録してあります', true));
+  })();
+</script>
