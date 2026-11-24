@@ -4,13 +4,13 @@
 
 | 項目 | 内容 |
 |---|---|
-| 曲名 | Suave Standpipe |
+| 曲名 | Late Night Radio |
 | 作曲 | Kevin MacLeod |
 | 配布元 | incompetech.com（https://incompetech.com/music/royalty-free/music.html） |
-| 雰囲気 | Downtempo / Chill（エレピ・サックス・ホーンの Lo-fi 系ジャズ） |
+| 雰囲気 | Calming / Relaxed（エレピ・ベース・ドラムの Lo-fi 系チル、72 BPM） |
 | ライセンス | Creative Commons: By Attribution 4.0（CC BY 4.0）https://creativecommons.org/licenses/by/4.0/ |
-| 動画内の音量 | 元音源の 5%（約 -26 dB）。最初の 0.8 秒でフェードイン、最後の 1.5 秒でフェードアウト |
-| ファイル | `assets/bgm/suave_standpipe.mp3` |
+| 動画内の音量 | 話している間は元音源の 15%（約 -16 dB）、冒頭と締めのスイング部分は 30%。最後の 1.5 秒でフェードアウト |
+| ファイル | `assets/bgm/late_night_radio.mp3` |
 
 ## 利用条件（2026年11月24日に配布元で確認）
 
@@ -21,7 +21,7 @@
 ## 概要欄に貼るクレジット（このままコピーしてください）
 
 ```
-Music: "Suave Standpipe" Kevin MacLeod (incompetech.com)
+Music: "Late Night Radio" Kevin MacLeod (incompetech.com)
 Licensed under Creative Commons: By Attribution 4.0 License
 http://creativecommons.org/licenses/by/4.0/
 ```
@@ -29,7 +29,7 @@ http://creativecommons.org/licenses/by/4.0/
 ## 注意点
 
 - 投稿後に YouTube の Content ID の申し立てが届くことがまれにあります。CC BY の曲なので、異議申し立てで「ライセンスを持っている（Creative Commons）」を選び、上のクレジットと配布元の URL を示せば解除されます。
-- 予備曲として `assets/bgm/local_forecast_slower.mp3`（Kevin MacLeod「Local Forecast - Slower」同じく CC BY 4.0）も入れてあります。曲を差し替えるときは `config/style.json` の `bgm.file` を変更し、クレジットも合わせて変えてください。
+- ほかの候補曲として `assets/bgm/study_and_relax.mp3`（「Study And Relax」）と `assets/bgm/suave_standpipe.mp3`（「Suave Standpipe」）も入れてあります。どちらも Kevin MacLeod の曲で CC BY 4.0 です。曲を差し替えるときは `config/style.json` の `bgm.file` を変更し、クレジットも合わせて変えてください。
 
 ## 効果音
 
