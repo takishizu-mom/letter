@@ -10,10 +10,19 @@
 6. FFmpeg で音量を YouTube の基準（-14 LUFS）に整える
 7. 品質チェックのレポートを出力（音ズレ・音量・文字切れ・UI との重なり・テロップ一覧）
 
-## 新しい動画を作るとき
+## いちばん簡単な使い方
 
-1. 動画を `input/` に置く
-2. `projects/<好きな名前>/project.json` を作る（`projects/muta-lever/project.json` をコピーして書き換えるのが簡単です）
+Claude Code のこのリポジトリのセッションに動画を送って「編集して」と言うだけで、`.claude/skills/golf-short/SKILL.md` の手順で最後まで仕上げます。
+
+## 新しい動画を作るとき（手動）
+
+```bash
+python scripts/new_project.py <名前> 動画1.mov [動画2.mov ...]
+```
+
+これで動画のコピー・文字起こし・人物検出・つなぎ目の重複カット・スイング検出（冒頭と締めのスイング再生、サムネイルの場面）まで自動で設定されます。あとは `projects/<名前>/transcript.txt` を見て `project.json` のタイトルと誤変換（fixes）を書き、下の「実行する」へ。
+
+project.json の主な項目:
 
 ```json
 {
@@ -27,6 +36,8 @@
 ```
 
 - 動画が複数に分かれているときは `inputs` に順番に並べると 1 本につながります。重複部分は `"end": 80.0`（秒）のように切り詰められます。
+- `intro` / `outro` の `plays` は冒頭・締めに流すスイング（`speed: 0.5` でなめらかなスロー）。`outro.cta` はレッスン案内の文言とリンク。
+- `thumbnail` の `time` はサムネイルに使う瞬間（秒）。
 - 冒頭のタイトルは内容に合わせて毎回考えて入れてください（2 行・各 10 文字前後がおすすめ）。
 
 3. 実行する
@@ -93,9 +104,11 @@ golf-shorts/
 ```bash
 sudo apt-get install -y ffmpeg libegl1 libgles2 libgl1
 python3 -m venv .venv && . .venv/bin/activate
-pip install torch openai-whisper mediapipe opencv-python-headless numpy "fugashi[unidic-lite]"
+pip install -r requirements.txt
 cd remotion && npm ci
 ```
+
+声の雑音処理は標準でオフです（元の音のまま）。使うときは `config/style.json` の `voice.enabled` を `true` にします。
 
 - Whisper のモデルは初回に openaipublic.azureedge.net から自動でダウンロードされます。
 - 骨格推定モデル `assets/models/pose_landmarker_full.task` は storage.googleapis.com の MediaPipe 公式モデルです。

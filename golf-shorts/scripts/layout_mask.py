@@ -92,6 +92,7 @@ def analyze(path: str, out: str) -> dict:
         output_segmentation_masks=True,
     )
     bodies, shafts, circles, heads, hands, last = [], [], [], [], [], None
+    pose = []  # 手元の高さ・肩の高さ（スイング検出用。見失ったコマは NaN）
     with vision.PoseLandmarker.create_from_options(opts) as det:
         # 精度のため 2 倍解像度で推定
         for i, f in enumerate(frames):
@@ -108,8 +109,10 @@ def analyze(path: str, out: str) -> dict:
                 moving = np.hypot(hand[0] - prev[0], hand[1] - prev[1]) * FPS > 0.8  # スイング中はブレて見えない
                 shaft = None if moving else detect_shaft(big, body, hand, height)
                 last = (body, club_zone(lm, height), head_top, hand)
+                pose.append((hand[1], (lm[11].y + lm[12].y) / 2, lm[0].y))
             else:
                 shaft = None
+                pose.append((np.nan, np.nan, np.nan))
             if last is None:
                 bodies.append(np.zeros((H, W), bool))
                 circles.append(np.zeros((H, W), bool))
@@ -140,7 +143,7 @@ def analyze(path: str, out: str) -> dict:
     # 手元の移動速度（スイング中かどうかの判定に使う。単位: 画面高さ/秒）
     hands = np.array(hands, float)
     speed = np.r_[0, np.hypot(*np.diff(hands, axis=0).T) * FPS]
-    np.savez_compressed(out, mask=masks, head=heads, hand_speed=np.nan_to_num(speed), fps=FPS)
+    np.savez_compressed(out, mask=masks, head=heads, hand_speed=np.nan_to_num(speed), pose=np.array(pose, float), fps=FPS)
     return {"frames": int(len(masks)), "shaft_found": found, "head_top_p05": float(np.percentile(heads, 5)),
             "head_top_median": float(np.median(heads))}
 

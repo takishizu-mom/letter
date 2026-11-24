@@ -464,6 +464,8 @@ def build(project_path):
         name[key] = {"x": x, "y": y, "mode": "plate" if ov == 0 else ("none" if key == "intro" else "band")}
 
     total = round(intro_dur + new_duration + outro_dur, 3)
+    if total > 180:
+        warnings.append(f"長さ {total:.0f} 秒：YouTube ショートの上限（3 分）を超えています。締めのスイングを減らすか keep で詰めてください")
     bgm = cfg["bgm"] | proj.get("bgm", {})
     # 話していない冒頭・締めは BGM を少し大きく
     bgm["boost"] = [[0, intro_dur], [intro_dur + new_duration, total]] if (intro_dur or outro_dur) else []
@@ -471,8 +473,8 @@ def build(project_path):
     th = proj.get("thumbnail")
     thumbnail = th and {
         "image": f"{rel}/thumb.jpg", "offsetY": cfg["videoOffsetY"] + th.get("shift", 0),
-        "lines": [mark_emphasis(l, th.get("emphasis", [])) for l in th["lines"]],
-        "sizes": th.get("sizes", [100] * len(th["lines"])),
+        "lines": [mark_emphasis(l, th.get("emphasis", proj.get("title_emphasis", []))) for l in th.get("lines", proj["title"])],
+        "sizes": th.get("sizes", [104, 124, 104][:len(th.get("lines", proj["title"]))]),
     }
     edit = {
         "thumbnail": thumbnail,

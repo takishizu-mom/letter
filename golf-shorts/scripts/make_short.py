@@ -112,14 +112,15 @@ def make_source(parts, keep, out, fps, cfg, intro=(), outro=()):
                  "speed": p.get("speed", 1), "voice": False} for p in items]
 
     pieces = plays(intro) + main + plays(outro)
-    vf = voice_filter(cfg, noise_floor_db(parts))
+    # 雑音処理は style.json の voice.enabled が true のときだけ（標準は元の音のまま）
+    vf = voice_filter(cfg, noise_floor_db(parts)) if cfg["voice"].get("enabled") else "anull"
     inputs, filt, fade = [], [], 0.012
     for i, pc in enumerate(pieces):
         inputs += ["-ss", f"{pc['start']:.3f}", "-t", f"{pc['dur']:.3f}", "-i", pc["src"]]
         out_dur = pc["dur"] / pc["speed"]
         if pc["speed"] == 1:
             v = f"[{i}:v]fps={fps},scale=1080:1920:flags=lanczos,setsar=1,setpts=PTS-STARTPTS[v{i}]"
-            chain = vf if pc["voice"] else f"highpass=f={cfg['voice']['highpass']}:p=2,afftdn=nr=10:nf=-20:tn=1"
+            chain = vf if pc["voice"] else "anull"
             a = (f"[{i}:a]aresample=48000,asetpts=PTS-STARTPTS,{chain},"
                  f"afade=t=in:d={fade},afade=t=out:st={max(0, out_dur - fade):.3f}:d={fade}[a{i}]")
         else:  # スロー再生：動きを補間してなめらかに。音は消して BGM だけにする
@@ -219,6 +220,10 @@ def main():
     final = os.path.join(out_dir, f"{pid}{'_preview' if args.fast else ''}.mp4")
     loudnorm(raw, final, cfg["loudness"]["target"], cfg["loudness"]["truePeak"])
     shutil.copy(os.path.join(pdir, f"{pid}.srt"), os.path.join(out_dir, f"{pid}.srt"))
+    if not args.fast:  # iPhone 保存・LINE 送信用の軽い版
+        run(["ffmpeg", "-v", "error", "-y", "-i", final, "-c:v", "libx264", "-preset", "slow", "-crf", "24", "-maxrate", "3M",
+             "-bufsize", "6M", "-pix_fmt", "yuv420p", "-r", "30", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart",
+             os.path.join(out_dir, f"{pid}_share.mp4")])
     run([PY, os.path.join(ROOT, "scripts", "qc.py"), ppath, final])
     print("完成:", final)
 

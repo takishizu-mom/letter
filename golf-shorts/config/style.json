@@ -81,6 +81,21 @@
     "denoise": 10,
     "gateAboveFloor": 1,
     "noiseRange": 0.33,
-    "presence": 3
+    "presence": 3,
+    "enabled": false
+  },
+  "cta": {
+    "label": "LESSON",
+    "lines": [
+      "レッスンのご相談は",
+      "DMでお気軽に"
+    ],
+    "emphasis": [
+      "DM"
+    ],
+    "links": [
+      "Instagram  @muuta.golf",
+      "YouTube  @muutagolf"
+    ]
   }
 }

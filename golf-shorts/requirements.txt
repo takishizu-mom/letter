@@ -1,0 +1,7 @@
+fugashi==1.5.2
+mediapipe==1.2.3
+numpy==2.5.5
+openai-whisper==20250625
+opencv-python-headless==5.1.0.95
+torch==2.15.0
+unidic-lite==1.0.8
