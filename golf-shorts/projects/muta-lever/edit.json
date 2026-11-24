@@ -1,4 +1,31 @@
 {
+ "thumbnail": {
+  "image": "projects/muta-lever/thumb.jpg",
+  "offsetY": 440,
+  "lines": [
+   [
+    {
+     "text": "右手で叩いても"
+    }
+   ],
+   [
+    {
+     "text": "引っかけない",
+     "em": true
+    }
+   ],
+   [
+    {
+     "text": "打ち方"
+    }
+   ]
+  ],
+  "sizes": [
+   100,
+   132,
+   100
+  ]
+ },
  "fps": 60,
  "width": 1080,
  "height": 1920,
@@ -1494,7 +1521,7 @@
   }
  ],
  "bgm": {
-  "file": "assets/bgm/suave_standpipe.mp3",
+  "file": "assets/bgm/late_night_radio.mp3",
   "volume": 0.15,
   "startFrom": 0,
   "fadeOut": 1.5,
