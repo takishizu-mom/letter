@@ -12,3 +12,5 @@ output/*_qc_sheet.jpg
 assets/models/
 assets/bgm/local_forecast_slower.mp3
 __pycache__/
+output/bgm_demo/
+output/*_thumbnail.jpg

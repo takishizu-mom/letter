@@ -74,23 +74,59 @@ def prepare_inputs(proj, pdir):
     return parts, offset
 
 
-def make_source(parts, keep, out, fps):
-    """素材をつなぎ、不要な間をカットし、1080×1920 に整えた映像を作る。"""
+def noise_floor_db(parts):
+    """声のない部分の音量（雑音の大きさ）を推定する。"""
+    vals = []
+    for src, start, end in parts:
+        raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", str(start), "-t", str(end - start), "-i", src,
+                              "-ac", "1", "-ar", "16000", "-f", "s16le", "-"], capture_output=True).stdout
+        x = np.frombuffer(raw, "<i2").astype(float) / 32768
+        f = x[:len(x) // 800 * 800].reshape(-1, 800)
+        vals.append(20 * np.log10(np.sqrt((f ** 2).mean(1)) + 1e-9))
+    return float(np.percentile(np.concatenate(vals), 15))
+
+
+def voice_filter(cfg, floor_db):
+    """声を聞き取りやすく：低いうなりを削り、雑音を減らし、話していない間の雑音を約 1/3 に下げる。"""
+    v = cfg["voice"]
+    gate = 10 ** ((floor_db + v["gateAboveFloor"]) / 20)
+    return (f"highpass=f={v['highpass']}:p=2,afftdn=nr={v['denoise']}:nf=-20:tn=1,"
+            f"agate=threshold={gate:.4f}:ratio=6:range={v['noiseRange']}:attack=6:release=220:knee=2,"
+            f"equalizer=f=4500:t=h:w=4000:g={v['presence']}")
+
+
+def make_source(parts, keep, out, fps, cfg, intro=(), outro=()):
+    """冒頭のスイング＋本編（不要な間をカット）＋締めのスイングをつなぎ、1080×1920 の映像を作る。"""
     # つないだタイムライン上の残す区間を、元ファイルごとの区間に置き換える
-    pieces, off = [], 0.0
+    main, off = [], 0.0
     for src, s, e in parts:
         length = e - s
         for a, b in keep:
             a2, b2 = max(a, off), min(b, off + length)
             if b2 - a2 > 0.02:
-                pieces.append((src, s + a2 - off, b2 - a2))
+                main.append({"src": src, "start": s + a2 - off, "dur": b2 - a2, "speed": 1, "voice": True})
         off += length
+
+    def plays(items):
+        return [{"src": parts[p["input"]][0], "start": p["start"], "dur": p["end"] - p["start"],
+                 "speed": p.get("speed", 1), "voice": False} for p in items]
+
+    pieces = plays(intro) + main + plays(outro)
+    vf = voice_filter(cfg, noise_floor_db(parts))
     inputs, filt, fade = [], [], 0.012
-    for i, (src, start, dur) in enumerate(pieces):
-        inputs += ["-ss", f"{start:.3f}", "-t", f"{dur:.3f}", "-i", src]
-        filt.append(f"[{i}:v]fps={fps},scale=1080:1920:flags=lanczos,setsar=1,setpts=PTS-STARTPTS[v{i}];"
-                    f"[{i}:a]aresample=48000,asetpts=PTS-STARTPTS,"
-                    f"afade=t=in:d={fade},afade=t=out:st={max(0, dur - fade):.3f}:d={fade}[a{i}]")
+    for i, pc in enumerate(pieces):
+        inputs += ["-ss", f"{pc['start']:.3f}", "-t", f"{pc['dur']:.3f}", "-i", pc["src"]]
+        out_dur = pc["dur"] / pc["speed"]
+        if pc["speed"] == 1:
+            v = f"[{i}:v]fps={fps},scale=1080:1920:flags=lanczos,setsar=1,setpts=PTS-STARTPTS[v{i}]"
+            chain = vf if pc["voice"] else f"highpass=f={cfg['voice']['highpass']}:p=2,afftdn=nr=10:nf=-20:tn=1"
+            a = (f"[{i}:a]aresample=48000,asetpts=PTS-STARTPTS,{chain},"
+                 f"afade=t=in:d={fade},afade=t=out:st={max(0, out_dur - fade):.3f}:d={fade}[a{i}]")
+        else:  # スロー再生：動きを補間してなめらかに。音は消して BGM だけにする
+            v = (f"[{i}:v]setpts={1 / pc['speed']:.4f}*(PTS-STARTPTS),minterpolate=fps={fps}:mi_mode=mci:mc_mode=aobmc:me_mode=bidir,"
+                 f"scale=1080:1920:flags=lanczos,setsar=1[v{i}]")
+            a = f"aevalsrc=0:c=stereo:s=48000:d={out_dur:.3f}[a{i}]"
+        filt.append(v + ";" + a)
     n = len(pieces)
     filt.append("".join(f"[v{i}][a{i}]" for i in range(n)) + f"concat=n={n}:v=1:a=1[v][a]")
     run(["ffmpeg", "-v", "error", "-y", *inputs, "-filter_complex", ";".join(filt), "-map", "[v]", "-map", "[a]",
@@ -112,6 +148,20 @@ def render(edit_rel, out, fast=False):
     if fast:
         cmd += ["--scale", "0.5"]
     run(cmd, cwd=REMOTION)
+
+
+def make_thumbnail(proj, parts, pub, pid, out_dir):
+    """サムネイル：指定した瞬間のコマを背景に、タイトルを大きく載せた画像を書き出す。"""
+    th = proj.get("thumbnail")
+    if not th:
+        return None
+    src, start, _ = parts[th["input"]]
+    run(["ffmpeg", "-v", "error", "-y", "-ss", str(th["time"]), "-i", src, "-frames:v", "1",
+         "-vf", "scale=1080:1920:flags=lanczos", "-q:v", "2", os.path.join(pub, "thumb.jpg")])
+    out = os.path.join(out_dir, f"{pid}_thumbnail.jpg")
+    run(["npx", "remotion", "still", "src/index.ts", "Thumbnail", out, "--props", json.dumps({"editFile": f"projects/{pid}/edit.json"}),
+         "--image-format", "jpeg", "--jpeg-quality", "92"], cwd=REMOTION)
+    return out
 
 
 def loudnorm(src, out, target, tp):
@@ -157,11 +207,13 @@ def main():
         build_project.write_srt(edit["captions"], os.path.join(pdir, f"{pid}.srt"))
         for w in warnings:
             print("⚠", w)
-        make_source(parts, keep, os.path.join(pub, "source.mp4"), cfg["fps"])
+        make_source(parts, keep, os.path.join(pub, "source.mp4"), cfg["fps"], cfg,
+                    proj.get("intro", {}).get("plays", []), proj.get("outro", {}).get("plays", []))
 
     # edit.json（手で直した内容を含む）を Remotion の public に置いて描画
     shutil.copy(os.path.join(pdir, "edit.json"), os.path.join(pub, "edit.json"))
     sync_assets()
+    make_thumbnail(proj, json.load(open(os.path.join(pdir, "work", "parts.json"))), pub, pid, out_dir)
     raw = os.path.join(pdir, "work", "render.mp4")
     render(f"projects/{pid}/edit.json", raw, fast=args.fast)
     final = os.path.join(out_dir, f"{pid}{'_preview' if args.fast else ''}.mp4")

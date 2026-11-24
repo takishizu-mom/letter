@@ -46,7 +46,8 @@
     "lead": 0.25,
     "tail": 0.7,
     "motionSpeed": 0.35,
-    "introHold": 1.9
+    "introHold": 1.9,
+    "tailBeforeOutro": 0.5
   },
   "zoom": {
     "scale": 1.06,
@@ -55,9 +56,10 @@
   },
   "bgm": {
     "file": "assets/bgm/suave_standpipe.mp3",
-    "volume": 0.05,
+    "volume": 0.15,
     "startFrom": 0,
-    "fadeOut": 1.5
+    "fadeOut": 1.5,
+    "boostVolume": 0.3
   },
   "sfx": {
     "title": {
@@ -73,5 +75,12 @@
     "target": -14,
     "truePeak": -1.5
   },
-  "maxPhrase": 15
+  "maxPhrase": 15,
+  "voice": {
+    "highpass": 120,
+    "denoise": 10,
+    "gateAboveFloor": 1,
+    "noiseRange": 0.33,
+    "presence": 3
+  }
 }

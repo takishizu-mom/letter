@@ -13,7 +13,7 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from 'remotion';
-import type {Caption, EditData, Span} from './types';
+import type {Caption, Cta, EditData, Span} from './types';
 
 const FONTS: [string, string, string][] = [
   ['NotoSansJP', 'fonts/NotoSansJP.ttf', '100 900'],
@@ -22,7 +22,7 @@ const FONTS: [string, string, string][] = [
   ['Montserrat', 'fonts/Montserrat.ttf', '100 900'],
 ];
 
-const useFonts = () => {
+export const useFonts = () => {
   const [handle] = useState(() => delayRender('fonts'));
   useEffect(() => {
     Promise.all(
@@ -36,7 +36,7 @@ const useFonts = () => {
 };
 
 // 白文字＋黒縁。縁を背面に別レイヤーで描くことで、縁が文字を細らせない。
-const OutlinedLine: React.FC<{
+export const OutlinedLine: React.FC<{
   spans: Span[];
   fontSize: number;
   family: string;
@@ -234,6 +234,77 @@ const NameBand: React.FC<{data: EditData; durationFrames: number}> = ({data, dur
   );
 };
 
+// 締め：レッスン案内とリンク（上部の帯に表示）
+const CtaView: React.FC<{data: EditData; cta: Cta; durationFrames: number}> = ({data, cta, durationFrames}) => {
+  const frame = useCurrentFrame();
+  const {fps} = useVideoConfig();
+  const {style} = data;
+  const inP = spring({frame, fps, config: {damping: 16, stiffness: 150}, durationInFrames: 16});
+  const out = interpolate(frame, [durationFrames - 10, durationFrames], [1, 0], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'});
+  const em = (line: string): Span[] => {
+    const words = cta.emphasis ?? [];
+    const re = words.length ? new RegExp(`(${words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})`) : null;
+    return re ? line.split(re).filter(Boolean).map((t) => ({text: t, em: words.includes(t)})) : [{text: line}];
+  };
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: 236,
+        left: 0,
+        right: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        opacity: out,
+        transform: `translateY(${interpolate(inP, [0, 1], [-20, 0])}px)`,
+      }}
+    >
+      <div style={{display: 'flex', alignItems: 'baseline', gap: 14, marginBottom: 6, textShadow: '0 2px 6px rgba(0,0,0,0.6)'}}>
+        <span style={{fontFamily: 'Montserrat', fontWeight: 700, fontSize: 26, letterSpacing: '0.3em', color: style.gold}}>{cta.label}</span>
+        <span style={{width: 2, height: 26, background: style.gold, alignSelf: 'center'}} />
+        <span style={{fontFamily: 'ZenKaku', fontWeight: 900, fontSize: 36, color: '#fff', letterSpacing: '0.06em'}}>{data.name.label}</span>
+      </div>
+      {cta.lines.map((l, i) => (
+        <OutlinedLine key={i} spans={em(l)} fontSize={i === cta.lines.length - 1 ? 92 : 78} family="ZenKaku" weight={900} style={style} />
+      ))}
+      <div style={{display: 'flex', gap: 14, marginTop: 14, opacity: interpolate(frame, [8, 18], [0, 1], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'})}}>
+        {cta.links.map((l) => (
+          <div
+            key={l}
+            style={{
+              fontFamily: 'Montserrat',
+              fontWeight: 600,
+              fontSize: 30,
+              color: '#fff',
+              background: 'rgba(12,16,14,0.78)',
+              border: `2px solid ${style.gold}`,
+              borderRadius: 999,
+              padding: '8px 22px',
+              whiteSpace: 'pre',
+            }}
+          >
+            {l}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const bgmLevel = (data: EditData, t: number) => {
+  const base = data.bgm.volume;
+  const boost = data.bgm.boostVolume ?? base;
+  let v = base;
+  for (const [a, b] of data.bgm.boost ?? []) {
+    v = Math.max(
+      v,
+      interpolate(t, [a - 0.01, a, b - 0.5, b], [base, boost, boost, base], {extrapolateLeft: 'clamp', extrapolateRight: 'clamp'}),
+    );
+  }
+  return v;
+};
+
 const zoomAt = (data: EditData, t: number) => {
   let s = 1;
   for (const z of data.zooms) {
@@ -303,19 +374,25 @@ export const GolfShort: React.FC<{data: EditData}> = ({data}) => {
           <NamePlate data={data} durationFrames={nameLen} pos={data.name.intro} />
         </Sequence>
       ) : null}
-      <Sequence from={durationInFrames - outroLen} durationInFrames={outroLen} name="NameOutro">
-        {data.name.outro.mode === 'plate' ? (
-          <NamePlate data={data} durationFrames={outroLen} pos={data.name.outro} />
-        ) : (
-          <NameBand data={data} durationFrames={outroLen} />
-        )}
-      </Sequence>
+      {data.outro?.cta ? (
+        <Sequence from={f(data.outro.start)} durationInFrames={durationInFrames - f(data.outro.start)} name="CTA">
+          <CtaView data={data} cta={data.outro.cta} durationFrames={durationInFrames - f(data.outro.start)} />
+        </Sequence>
+      ) : (
+        <Sequence from={durationInFrames - outroLen} durationInFrames={outroLen} name="NameOutro">
+          {data.name.outro.mode === 'plate' ? (
+            <NamePlate data={data} durationFrames={outroLen} pos={data.name.outro} />
+          ) : (
+            <NameBand data={data} durationFrames={outroLen} />
+          )}
+        </Sequence>
+      )}
 
       <Audio
         src={staticFile(data.bgm.file)}
         startFrom={f(data.bgm.startFrom)}
         volume={(fr) =>
-          data.bgm.volume *
+          bgmLevel(data, fr / fps) *
           interpolate(fr, [0, f(0.8), durationInFrames - f(data.bgm.fadeOut), durationInFrames], [0, 1, 1, 0], {
             extrapolateLeft: 'clamp',
             extrapolateRight: 'clamp',

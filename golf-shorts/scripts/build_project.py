@@ -253,6 +253,10 @@ def plan_cuts(words, duration, hand_speed, fps_mask, cfg):
     return [(round(a * fps) / fps, round(b * fps) / fps) for a, b in keep]
 
 
+def play_duration(plays):
+    return round(sum((p["end"] - p["start"]) / p.get("speed", 1) for p in plays), 3)
+
+
 def unmap(t, keep):
     """編集後の時刻 → 元のタイムラインの時刻。"""
     acc = 0.0
@@ -369,8 +373,15 @@ def build(project_path):
             phrases.append((p_text, p_times))
 
     # 2) カット
-    keep = proj.get("keep") or plan_cuts(word_times, duration, hand_speed, fps_mask, cfg["cut"] | {"fps": cfg["fps"]})
+    cut_cfg = cfg["cut"] | {"fps": cfg["fps"]}
+    if proj.get("intro"):  # 冒頭にスイングを流すときは、話し始めの前の待ち時間は不要
+        cut_cfg["introHold"] = cut_cfg["lead"]
+    if proj.get("outro"):
+        cut_cfg["tail"] = cut_cfg.get("tailBeforeOutro", 0.5)
+    keep = proj.get("keep") or plan_cuts(word_times, duration, hand_speed, fps_mask, cut_cfg)
     new_duration = sum(b - a for a, b in keep)
+    intro_dur = play_duration(proj.get("intro", {}).get("plays", []))
+    outro_dur = play_duration(proj.get("outro", {}).get("plays", []))
 
     # 3) テロップ
     caps = []
@@ -411,18 +422,20 @@ def build(project_path):
     # タイトルは話し始めまで（短すぎ・長すぎないよう制限）
     first_cap = caps[0]["start"] if caps else t_cfg["duration"]
     title_end = min(t_cfg["duration"], max(t_cfg["minDuration"], first_cap))
+    if intro_dur:  # 冒頭のスイングの間はタイトルを出し、本編からはテロップ
+        title_end = intro_dur
     title_bottom = t_cfg["y"] + 48 + len(title_lines) * t_cfg["fontSize"] * 1.18
 
     # 5) 配置
     warnings = []
     out_caps = []
     for c in caps:
-        occupied = title_bottom if c["start"] < title_end else 0
-        if c["end"] > new_duration - 3:  # 最後に名前を帯に出すときはその下に置く
+        occupied = title_bottom if c["start"] + intro_dur < title_end else 0
+        if not outro_dur and c["end"] > new_duration - 3:  # 最後に名前を帯に出すときはその下に置く
             occupied = max(occupied, cfg["safe"]["top"] + 70)
         fs, y = layout_caption(c, mask, fps_mask, cfg, occupied, warnings)
         out_caps.append({
-            "start": round(c["start"], 3), "end": round(c["end"], 3), "size": c["size"],
+            "start": round(c["start"] + intro_dur, 3), "end": round(c["end"] + intro_dur, 3), "size": c["size"],
             "fontSize": fs, "y": y, "text": c["text"],
             "lines": [mark_emphasis(l, emphasis) for l in c["linesText"]],
         })
@@ -431,28 +444,47 @@ def build(project_path):
     zooms, sfx, last = [], [], -99
     for c in out_caps:
         if c["size"] == "L" and c["start"] - last >= cfg["zoom"]["minGap"] and len(zooms) < cfg["zoom"]["maxCount"]:
-            zooms.append({"start": c["start"], "end": min(c["end"] + 0.6, new_duration), "scale": cfg["zoom"]["scale"]})
+            zooms.append({"start": c["start"], "end": min(c["end"] + 0.6, intro_dur + new_duration), "scale": cfg["zoom"]["scale"]})
             sfx.append({"t": c["start"], "file": cfg["sfx"]["accent"]["file"], "volume": cfg["sfx"]["accent"]["volume"]})
             last = c["start"]
     sfx.insert(0, {"t": 0.05, "file": cfg["sfx"]["title"]["file"], "volume": cfg["sfx"]["title"]["volume"]})
+    if outro_dur:
+        sfx.append({"t": intro_dur + new_duration + 0.3, "file": cfg["sfx"]["title"]["file"], "volume": cfg["sfx"]["title"]["volume"]})
 
     # 7) 名前表示の位置（冒頭・最後とも人物/クラブを避ける）
     name = cfg["name"] | proj.get("name", {})
     cands = [(56, y) for y in (1330, 1160, 990, 820)]
     for key, (t0, t1) in {"intro": (name["start"], name["end"]),
                           "outro": (new_duration - 3, new_duration)}.items():
+        if (key == "intro" and intro_dur) or (key == "outro" and outro_dur):
+            name[key] = {"x": 0, "y": 0, "mode": "none"}  # タイトル・締めの案内の中に名前を出す
+            continue
         ov, x, y = place_box(mask, unmap(t0, keep), unmap(t1, keep), fps_mask, cfg, cands, 470, 170)
         # 空きがなければ上部の帯に 1 行で表示（冒頭はタイトルの上の行に名前が入るので省略）
         name[key] = {"x": x, "y": y, "mode": "plate" if ov == 0 else ("none" if key == "intro" else "band")}
 
+    total = round(intro_dur + new_duration + outro_dur, 3)
+    bgm = cfg["bgm"] | proj.get("bgm", {})
+    # 話していない冒頭・締めは BGM を少し大きく
+    bgm["boost"] = [[0, intro_dur], [intro_dur + new_duration, total]] if (intro_dur or outro_dur) else []
     rel = f"projects/{pid}"
+    th = proj.get("thumbnail")
+    thumbnail = th and {
+        "image": f"{rel}/thumb.jpg", "offsetY": cfg["videoOffsetY"] + th.get("shift", 0),
+        "lines": [mark_emphasis(l, th.get("emphasis", [])) for l in th["lines"]],
+        "sizes": th.get("sizes", [100] * len(th["lines"])),
+    }
     edit = {
-        "fps": cfg["fps"], "width": cfg["width"], "height": cfg["height"], "duration": round(new_duration, 3),
+        "thumbnail": thumbnail,
+        "fps": cfg["fps"], "width": cfg["width"], "height": cfg["height"], "duration": total,
+        "intro": {"duration": intro_dur},
+        "outro": {"start": round(intro_dur + new_duration, 3), "duration": outro_dur,
+                  "cta": proj.get("outro", {}).get("cta")},
         "video": f"{rel}/source.mp4", "videoOffsetY": cfg["videoOffsetY"],
         "title": {"lines": title_lines, "start": 0, "end": title_end, "fontSize": t_cfg["fontSize"], "y": t_cfg["y"]},
         "name": name,
         "captions": out_caps, "zooms": zooms, "sfx": sfx,
-        "bgm": cfg["bgm"] | proj.get("bgm", {}),
+        "bgm": bgm,
         "style": cfg["style"],
     }
     return edit, keep, warnings

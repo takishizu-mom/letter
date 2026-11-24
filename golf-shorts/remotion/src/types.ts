@@ -11,6 +11,8 @@ export type Caption = {
   y: number; // テロップ上端の y 座標（px, 1080×1920 基準）
 };
 
+export type Cta = {label: string; lines: string[]; emphasis?: string[]; links: string[]};
+
 export type NamePos = {x: number; y: number; mode: 'plate' | 'band' | 'none'};
 
 export type Zoom = {start: number; end: number; scale: number};
@@ -29,7 +31,10 @@ export type EditData = {
   captions: Caption[];
   zooms: Zoom[];
   sfx: Sfx[];
-  bgm: {file: string; volume: number; startFrom: number; fadeOut: number};
+  bgm: {file: string; volume: number; startFrom: number; fadeOut: number; boost?: [number, number][]; boostVolume?: number};
+  intro?: {duration: number};
+  thumbnail?: {image: string; offsetY: number; lines: Span[][]; sizes: number[]};
+  outro?: {start: number; duration: number; cta?: Cta | null};
   style: {
     accent: string; // 強調色（黄）
     fill: string;
