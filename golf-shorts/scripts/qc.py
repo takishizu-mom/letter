@@ -48,7 +48,7 @@ def loudness(path, af=None):
 
 
 def frame_at(path, t):
-    raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t:.3f}", "-i", path, "-frames:v", "1",
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t:.3f}", "-i", path, "-frames:v", "1", "-vf", "scale=1080:1920",
                           "-f", "rawvideo", "-pix_fmt", "bgr24", "-"], capture_output=True).stdout
     return np.frombuffer(raw, np.uint8).reshape(1920, 1080, 3).copy() if raw else None
 

@@ -109,6 +109,8 @@ def boundary_scores(s):
                 sc = 10
             elif p2 == "非自立可能" and p1 in ("動詞", "形容詞"):
                 sc = -10 if prev[1] == "助詞" else -20  # 「して｜いる」「ないと｜いけない」はなるべく切らない
+            elif p1 == "名詞" and prev[0] == "の":
+                sc = -4  # 「ここの｜ポジション」のような名詞句は分けない
             elif p1 in CONTENT and prev[1] in ("助詞", "助動詞"):
                 sc = 7
             elif p1 in CONTENT and prev[1] == "接尾辞":
