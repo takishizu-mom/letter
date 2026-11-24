@@ -1,0 +1,14 @@
+.venv/
+remotion/node_modules/
+input/
+work/
+projects/*/work/
+projects/*/whisper.json
+projects/*/layout.npz
+remotion/public/projects/
+remotion/public/assets/
+output/*.mp4
+output/*_qc_sheet.jpg
+assets/models/
+assets/bgm/local_forecast_slower.mp3
+__pycache__/

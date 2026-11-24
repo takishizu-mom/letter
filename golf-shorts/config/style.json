@@ -1,0 +1,77 @@
+{
+  "fps": 60,
+  "width": 1080,
+  "height": 1920,
+  "videoOffsetY": 320,
+  "safe": {
+    "top": 232,
+    "bottom": 1480,
+    "left": 56,
+    "right": 56
+  },
+  "fontSizes": {
+    "L": 100,
+    "M": 80,
+    "S": 66,
+    "min": 50
+  },
+  "maxCharsPerLine": {
+    "L": 9,
+    "M": 12,
+    "S": 13
+  },
+  "title": {
+    "fontSize": 92,
+    "y": 236,
+    "duration": 3.0,
+    "minDuration": 1.6
+  },
+  "style": {
+    "accent": "#FFE03A",
+    "fill": "#FFFFFF",
+    "stroke": "#111111",
+    "strokeWidth": 15,
+    "band": "#0F1512",
+    "gold": "#D8B76A"
+  },
+  "name": {
+    "label": "牟田プロ",
+    "handle": "YouTube @muutagolf ／ IG @muuta.golf",
+    "start": 0.6,
+    "end": 5.0
+  },
+  "cut": {
+    "maxGap": 1.1,
+    "keepGap": 0.45,
+    "lead": 0.25,
+    "tail": 0.7,
+    "motionSpeed": 0.35,
+    "introHold": 1.9
+  },
+  "zoom": {
+    "scale": 1.06,
+    "maxCount": 4,
+    "minGap": 8
+  },
+  "bgm": {
+    "file": "assets/bgm/suave_standpipe.mp3",
+    "volume": 0.05,
+    "startFrom": 0,
+    "fadeOut": 1.5
+  },
+  "sfx": {
+    "title": {
+      "file": "assets/sfx/pop.wav",
+      "volume": 0.35
+    },
+    "accent": {
+      "file": "assets/sfx/tick.wav",
+      "volume": 0.22
+    }
+  },
+  "loudness": {
+    "target": -14,
+    "truePeak": -1.5
+  },
+  "maxPhrase": 15
+}
