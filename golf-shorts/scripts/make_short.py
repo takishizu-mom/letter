@@ -167,11 +167,12 @@ def make_thumbnail(proj, parts, pub, pid, out_dir):
 
 def loudnorm(src, out, target, tp):
     """YouTube の基準（約 -14 LUFS）に合わせる。声と BGM の比率は変えない。"""
+    lim = "alimiter=limit=0.5:attack=2:release=60:level=false"  # 打球音などの瞬間的なピークを先に抑える
     meas = subprocess.run(["ffmpeg", "-hide_banner", "-i", src, "-af",
-                           f"loudnorm=I={target}:TP={tp}:LRA=11:print_format=json", "-f", "null", "-"],
+                           f"{lim},loudnorm=I={target}:TP={tp}:LRA=11:print_format=json", "-f", "null", "-"],
                           capture_output=True, text=True).stderr
     m = json.loads(meas[meas.rindex("{"):])
-    af = (f"loudnorm=I={target}:TP={tp}:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
+    af = (f"{lim},loudnorm=I={target}:TP={tp}:LRA=11:measured_I={m['input_i']}:measured_TP={m['input_tp']}:"
           f"measured_LRA={m['input_lra']}:measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
     run(["ffmpeg", "-v", "error", "-y", "-i", src, "-c:v", "copy", "-af", af, "-ar", "48000", "-c:a", "aac",
          "-b:a", "256k", "-movflags", "+faststart", out])
